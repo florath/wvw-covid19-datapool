@@ -1,0 +1,5 @@
+---
+cron:
+  - description: "ping me"
+    url: /tasks/update_data/johns_hopkins_github
+    schedule: every 3 mins
