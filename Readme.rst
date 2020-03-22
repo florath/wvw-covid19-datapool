@@ -1,6 +1,8 @@
 Datapool of COVID-19 cases
 ++++++++++++++++++++++++++
 
+**THIS PROJECT IS CURRENTLY UNDER DEVELOPMENT AND NOT YET USABLE**
+
 Introduction
 ============
 
@@ -30,10 +32,26 @@ TBD.
 Data Sources
 ============
 
-TBD.
+Johns Hopkins GitHub
+====================
 
-Deploymen
-=========
+https://github.com/CSSEGISandData/COVID-19
+
+This is a collection and aggregation of many other data sources.
+
+List of data sources and Terms of Use can be found on the above WEB page.
+
+To convert the 'unusual' location information, the table which was
+created during the WirVsVirusHackathon, was used as the initial base:
+
+https://docs.google.com/spreadsheets/d/1hequqFkVIsF_BCMm4IlHJAWmHI7EcVbV4PvSPQu7hpc/edit#gid=1514093616
+
+Currently only a mapping of the country is done - as the region
+mapping is not yet available.
+
+
+Deployment
+==========
 
 .. code:: bash
 
