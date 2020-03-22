@@ -39,9 +39,9 @@ Thanks to the whole team ID#1757 of WirVsVirus for support and help
 and many, many links to data sources.
 
 Thanks to Google for supporting this project by providing cloud
-resources on "Google Cloud"_
+resources on `Google Cloud`_
 
-.. _"Google Cloud": https://cloud.google.com/
+.. _Google Cloud: https://cloud.google.com/
 
 
 ..  LocalWords:  WirVsVirus Hackathon
