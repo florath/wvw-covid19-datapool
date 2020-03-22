@@ -12,6 +12,6 @@ German government which took place from 2020-03-20 until 2020-03-22.
 
 .. _WirVsVirus: https://wirvsvirushackathon.org/
 
-.. image:: images/WirVsVirusLogo.png
+.. image:: images/WirVsVirusLogoSmall.png
    :alt: "WirVsVirus Hackathon Logo"
    :width: 250
