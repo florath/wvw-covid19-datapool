@@ -3,22 +3,19 @@ Datapool of COVID-19 cases
 
 **THIS PROJECT IS CURRENTLY UNDER DEVELOPMENT AND NOT YET USABLE**
 
-**THE PROJECT IS IN A PROVE ON CONCEPT PHASE - EVERYTHING MIGHT CHANGE**
+**THE PROJECT IS IN A PROVE OF CONCEPT PHASE - EVERYTHING MIGHT
+CHANGE**
 
-Introduction
+PLEASE HELP!
 ============
 
-This datapool (database) tries to collect data from different sources
-and provides them (refurbished) as a simple to use REST interface.
+Currently many important decisions are made based on incomplete or
+wrong numbers.
 
-This project was founded during the WirVsVirus_ Hackathon of the
-German government which took place from 2020-03-20 until 2020-03-22.
-
-.. _WirVsVirus: https://wirvsvirushackathon.org/
-
-.. image:: images/WirVsVirusLogoSmall.png
-   :alt: "WirVsVirus Hackathon Logo"
-   :width: 250
+* Find credible data sources
+* Check if sources can be used (legal, license, sensible data, ...)
+* If you are a programmer: write an adapter to convert the data
+  into the locally used JSON format
 
 
 Warning & Use of data
@@ -43,11 +40,41 @@ capacity of the RKI.  Therefore complete regions might have much
 higher numbers.
 
 
+Introduction
+============
+
+This datapool (database) tries to collect data from different sources
+and provides them (refurbished) as a simple to use REST interface.
+
+This project was founded during the WirVsVirus_ Hackathon of the
+German government which took place from 2020-03-20 until 2020-03-22.
+
+.. _WirVsVirus: https://wirvsvirushackathon.org/
+
+.. image:: images/WirVsVirusLogoSmall.png
+   :alt: "WirVsVirus Hackathon Logo"
+   :width: 250
+
+
+Features
+========
+
+* Automatically updated every some hours from the given sources
+* Unified and easy to use JSON formatted data
+* Can be used locally or in a cloud.
+
+
 Database
 ========
 
 The database provides data from different sources about COVID-19.  The
 data is unified (has the same format) and converted to JSON.
+
+**IS THIS REALLY THE CORRECT WAY??? THE PROBLEM IS, THAT IT IS MOSTLY
+NOT DECIDABLE WHAT A PRIMARY AND A SECONDARY SOURCE IS. IN THIS SENSE
+EVEN RKI DATA ARE 'SECONDARY' AS THEY ARE COLLECTED FROM THE
+GESUNDHEITSÄMTER.**
+
 
 Layout
 ------
@@ -71,6 +98,16 @@ is, that some sources (e.g. Johns Hopkins data set) is already a
 collection of other data sets.  Merging primary and secondary in one
 collection is incorrect because it might lead to double counted
 cases.
+
+Data
+----
+
+Each data set can contain the following keys:
+
+* ...
+
+TBD.
+
 
 REST Interface
 ==============
@@ -126,7 +163,6 @@ The project name:
 .. code:: bash
 
    export WVV_GCLOUD_PROJECT=wirvsvirushackathon-271718
-
 
 
 Data Sources
