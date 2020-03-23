@@ -12,3 +12,7 @@ https://github.com/CSSEGISandData/COVID-19
 Here is a list of data sources (under Datensätze / Links):
 
 https://docs.google.com/document/d/1DMAisYOtO1RZU7OVzppxrlRGVhjzJNq3eRiKbNHKC-g/edit?ts=5e754850#
+
+Landesgedundheitsämter:
+
+https://www.heise.de/newsticker/meldung/Corona-Statistik-in-Deutschland-Noch-mehr-Durcheinander-4687788.html
