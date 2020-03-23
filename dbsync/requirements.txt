@@ -1,2 +1,5 @@
 flask
 gitpython
+google-cloud-firestore
+openpyxl
+python-dateutil
