@@ -1,5 +1,8 @@
 ---
 cron:
-  - description: "ping me"
+  - description: "Update Johns Hopkins data"
     url: /tasks/update_data/johns_hopkins_github
-    schedule: every 3 mins
+    schedule: every 6 hours
+  - description: "Update ECDC data"
+    url: /tasks/update_data/ecdc_xlsx
+    schedule: every 5 hours

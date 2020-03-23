@@ -8,6 +8,8 @@ import dateutil.parser
 import git
 import os
 import shutil
+import hashlib
+from google.cloud import firestore
 
 
 GIT_REPO_URL = "https://github.com/CSSEGISandData/COVID-19.git"
@@ -62,7 +64,7 @@ def handle_one_data_line(line):
         adm = [ country2iso[line[1].strip()], ]
 
         nd = {
-            'date': ts,
+            'timestamp': ts,
             'infected': convert2int(line[3]),
             'deaths': convert2int(line[4]),
             'recovered': convert2int(line[5]),
@@ -72,22 +74,39 @@ def handle_one_data_line(line):
             },
             'adm': adm,
         }
-        print(nd)
-        # data.append(nd)
+
+        sha_str = str(ts) + line[1] + line[3] + line[4] + line[5]
+
+        return nd, hashlib.sha256(sha_str.encode("utf-8")).hexdigest()
+
     except ValueError as ve:
         # If there is a problem e.g. converting the ts
         # just go on.
         print("ERROR converting [%s]: [%s]" (line, ve))
 
 
-def handle_one_data_file(fname):
+def handle_one_data_file(tab_ref, data_available_ids, fname):
     with open(fname, newline='') as csvfile:
         try:
             content = csv.reader(csvfile, delimiter=',', quotechar='"')
             # Skip header
             next(content)
             for line in content:
-                handle_one_data_line(line)
+                data, sha = handle_one_data_line(line)
+                # First check, if the id is already in the database
+                # based on the cache of ids.
+                if sha in data_available_ids:
+                    print("INFO: Document [%s] already exists "
+                          "(ID cache check)" % sha)
+                    continue
+                # Writing data is limited - check if the data is
+                # already in the DB first.
+                if tab_ref.document(sha).get().exists:
+                    # Document (entry) already exists
+                    print("INFO: Document [%s] already exists (DB check)" % sha)
+                    continue
+                tab_ref.document(sha).set(data)
+                
         except StopIteration as si:
             print("ERROR: StopIteration error in file [%s]" % fname)
 
@@ -104,15 +123,28 @@ def update_git():
 
 def update_data():
     '''Reads in the data from the git repo, converts it and pushes it into the DB'''
+    db = firestore.Client()
+    tab_ref = db.collection(u"cases")\
+                .document("data")\
+                .collection(u"secondary")\
+                .document("collections")\
+                .collection("johns-hopkins-github")
+
+    data_available_ids = []
+    for doc in tab_ref.stream():
+        data_available_ids.append(doc.id)
+    print("Loaded [%d] ids of data already available" % len(data_available_ids))
+    
     for fname in os.listdir(DATA_DIR):
         if fname.endswith(".csv"):
-            handle_one_data_file(os.path.join(DATA_DIR, fname))
+            handle_one_data_file(tab_ref, data_available_ids, os.path.join(DATA_DIR, fname))
 
     
 def import_data_johns_hopkins_github():
+    print("Called import_data_johns_hopkins_github")
     update_git()
     update_data()
-    print("Called update_data_johns_hopkins_github")
+    print("Finished import_data_johns_hopkins_github")
 
 
 if __name__ == '__main__':
