@@ -8,6 +8,8 @@ CHANGE**
 
 Nevertheless it is possible to already retreive complete data sets.
 
+**BECAUSE JOHNS HOPKINS CHANGED THE DATA FORMAT ON 2020-03-24, IT WILL
+TAKE A LITTLE BIT OF TIME TO ADAPT THE TOOLS TO THE NEW DATA SET.**
 
 PLEASE HELP!
 ============
@@ -109,11 +111,38 @@ being, the data is only unified and converted to JSON.
 Data
 ----
 
-Each data set can contain the following keys:
+Each data set **can** contain the following keys, i.e. most of the
+fields are optional:
 
-* ...
+* timestamp: interger; seconds since EPOCH
+* deaths: integer
+* indected: integer
+* recovered: integer
+* source: string; the source of the data
+* adm: list; administration zones. adm[0] is always the country
+  in two letter ISO code
+* original: dictionary; random data of the original data set
+  which is (currently) not mapped
 
-TBD.
+Example:
+
+.. code:: bash
+  {
+    "original": {
+      "location": [
+        "Estonia"
+      ]
+    },
+    "infected": 225,
+    "recovered": 1,
+    "source": "Johns-Hopkins-github",
+    "deaths": 0,
+    "timestamp": 1584437583,
+    "adm": [
+      "EE"
+    ]
+  }
+
 
 
 REST Interface
