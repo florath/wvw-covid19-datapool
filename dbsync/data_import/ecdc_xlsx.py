@@ -79,13 +79,14 @@ def update_data():
 
     db = firestore.Client()
     tab_ref = db.collection(u"cases")\
-                .document("data")\
-                .collection(u"secondary")\
-                .document("collections")\
-                .collection("ecdc-xlsx")
+                .document("sources")\
+                .collection("ecdc_xlsx")
 
     data_available_ids = get_available_data_ids(tab_ref)
-    import_data_collection(sheet_ranges.iter_rows(),
+    # Skip header
+    iter_rows = sheet_ranges.iter_rows()
+    next(iter_rows)
+    import_data_collection(iter_rows,
                            handle_one_data_line, tab_ref,
                            data_available_ids)
 
@@ -99,5 +100,5 @@ def import_data_ecdc_xlsx():
 
 if __name__ == '__main__':
     '''For (local) testing: only update the data'''
-    import_data_ecdc_xlsx()
+    update_data()
 

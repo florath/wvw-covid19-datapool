@@ -10,6 +10,7 @@ import os
 import shutil
 import hashlib
 from google.cloud import firestore
+from data_import.lib.utils import import_data_collection, get_available_data_ids
 
 
 GIT_REPO_URL = "https://github.com/CSSEGISandData/COVID-19.git"
@@ -39,7 +40,7 @@ def convert_ts(ts_str):
     return dateutil.parser.parse(ts_str).timestamp()
 
 
-def handle_one_data_line(line):
+def handle_one_data_line_2020_02(line):
     '''Converts one data line into json
 
     Format of the input data:
@@ -85,30 +86,38 @@ def handle_one_data_line(line):
         print("ERROR converting [%s]: [%s]" (line, ve))
 
 
+def get_callback_based_on_header(header):
+    '''Depending on the header return the appropriate callback function'''
+
+    if header == ['Province/State', 'Country/Region', 'Last Update',
+                  'Confirmed', 'Deaths', 'Recovered']:
+        return handle_one_data_line_2020_02
+    if header == ['\ufeffProvince/State', 'Country/Region', 'Last Update',
+                  'Confirmed', 'Deaths', 'Recovered']:
+        return handle_one_data_line_2020_02
+    if header == ['Province/State', 'Country/Region', 'Last Update',
+                  'Confirmed', 'Deaths', 'Recovered', 'Latitude', 'Longitude']:
+        return handle_one_data_line_2020_02
+
+    if header == ['FIPS', 'Admin2', 'Province_State', 'Country_Region',
+                  'Last_Update', 'Lat', 'Long_', 'Confirmed', 'Deaths',
+                  'Recovered', 'Active', 'Combined_Key']:
+        print("New format not yet implemented")
+        return None
+    
+    print("Unknown header in datafile [%s]" % header)
+    return None
+
+
 def handle_one_data_file(tab_ref, data_available_ids, fname):
     with open(fname, newline='') as csvfile:
-        try:
-            content = csv.reader(csvfile, delimiter=',', quotechar='"')
-            # Skip header
-            next(content)
-            for line in content:
-                data, sha = handle_one_data_line(line)
-                # First check, if the id is already in the database
-                # based on the cache of ids.
-                if sha in data_available_ids:
-                    print("INFO: Document [%s] already exists "
-                          "(ID cache check)" % sha)
-                    continue
-                # Writing data is limited - check if the data is
-                # already in the DB first.
-                if tab_ref.document(sha).get().exists:
-                    # Document (entry) already exists
-                    print("INFO: Document [%s] already exists (DB check)" % sha)
-                    continue
-                tab_ref.document(sha).set(data)
-                
-        except StopIteration as si:
-            print("ERROR: StopIteration error in file [%s]" % fname)
+        content = csv.reader(csvfile, delimiter=',', quotechar='"')
+        header = next(content)
+        hod_cb = get_callback_based_on_header(header)
+        if hod_cb == None:
+            print("No callback available for the data file [%s] - skipping" % fname)
+            return
+        import_data_collection(content, hod_cb, tab_ref, data_available_ids)
 
 
 def update_git():
@@ -125,15 +134,10 @@ def update_data():
     '''Reads in the data from the git repo, converts it and pushes it into the DB'''
     db = firestore.Client()
     tab_ref = db.collection(u"cases")\
-                .document("data")\
-                .collection(u"secondary")\
-                .document("collections")\
-                .collection("johns-hopkins-github")
+                .document("sources")\
+                .collection("johns_hopkins_github")
 
-    data_available_ids = []
-    for doc in tab_ref.stream():
-        data_available_ids.append(doc.id)
-    print("Loaded [%d] ids of data already available" % len(data_available_ids))
+    data_available_ids = get_available_data_ids(tab_ref)
     
     for fname in os.listdir(DATA_DIR):
         if fname.endswith(".csv"):

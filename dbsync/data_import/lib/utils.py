@@ -10,21 +10,21 @@ def import_data_collection(collection, handle_one_data_line_cb,
     '''
     try:
         # Skip header
-        next(collection)
         for line in collection:
             data, sha = handle_one_data_line_cb(line)
             # First check, if the id is already in the database
             # based on the cache of ids.
             if sha in data_available_ids:
-                print("INFO: Document [%s] already exists "
-                      "(ID cache check)" % sha)
+                #print("INFO: Document [%s] already exists "
+                #      "(ID cache check)" % sha)
                 continue
             # Writing data is limited - check if the data is
             # already in the DB first.
             if tab_ref.document(sha).get().exists:
                 # Document (entry) already exists
-                print("INFO: Document [%s] already exists (DB check)" % sha)
+                #print("INFO: Document [%s] already exists (DB check)" % sha)
                 continue
+            print("Add document [%s]" % sha)
             tab_ref.document(sha).set(data)
 
     except StopIteration as si:
