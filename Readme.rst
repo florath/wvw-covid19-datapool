@@ -184,7 +184,7 @@ number of calls, used CPU, outbound network traffic, ... costs.**
    :code:`gcloud app deploy dbsync/cron.yaml --project ${WVV_GCLOUD_PROJECT}`
 #. Debugging: have a lock at the logs
    :code:`gcloud app logs tail -s default --project ${WVV_GCLOUD_PROJECT}`
-	 
+
 
 Deploy in Project's Google Cloud
 --------------------------------
@@ -257,6 +257,42 @@ Currently only a mapping of the country is done - as the region
 mapping is not yet available.
 
 
+data.gouv.fr
+------------
+
+**THE DATA FROM THE ORIGINAL SOURCE IS CURRENTLY ONLY
+PARTIAL AVAILABLE AND IS CURRENTLY NOT AUTOMATICALLY UPDATED.**
+
+The French government provides a set of data which does not only
+include the number of infected and deaths, but also the number of
+people in hospital or on intensive care unit.
+
+https://www.data.gouv.fr/en/datasets/donnees-relatives-a-lepidemie-du-covid-19/
+
+The data is under 'Open License Version 2.0'.
+
+Original data downloaded from https://www.data.gouv.fr/en/datasets/donnees-relatives-a-lepidemie-du-covid-19
+on 2020-03-24.
+
+
+Hospital Numbers
+................
+
+Data path:
+
+.. code::
+
+   cases/sources/gouv-fr-hospital-numbers
+
+This data set contains information how many people are currently in
+hospital, how many are in critical care, how many died.
+
+Example:
+
+.. code-block:: JSON
+
+
+
 References
 ==========
 
@@ -265,7 +301,7 @@ Tidying the new Johns Hopkins Covid-19 time-series datasets
 
 URL: https://joachim-gassen.github.io/2020/03/tidying-the-new-johns-hopkins-covid-19-datasests/
 
-The first step looks very similar to the current implemntation here:
+The first step looks very similar to the current implementation here:
 tidy up the data, mapping regions / countries to ISO codes, ...
 
 

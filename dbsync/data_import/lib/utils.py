@@ -12,6 +12,10 @@ def import_data_collection(collection, handle_one_data_line_cb,
         # Skip header
         for line in collection:
             data, sha = handle_one_data_line_cb(line)
+            # If there is no need to process any further
+            # (e.g. errornous line), a None is returned.
+            if data is None:
+                continue
             # First check, if the id is already in the database
             # based on the cache of ids.
             if sha in data_available_ids:
