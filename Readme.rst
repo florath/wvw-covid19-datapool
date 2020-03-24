@@ -124,7 +124,8 @@ fields are optional:
 
 Example:
 
-.. code:: bash
+.. code-block:: JSON
+
   {
     "original": {
       "location": [
