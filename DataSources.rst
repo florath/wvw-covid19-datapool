@@ -78,8 +78,19 @@ Statistische Bundesamt
 * Result: **no data**
 
 
+To be implemented
+=================
+
+Stadt Münster
+-------------
+
+* https://github.com/od-ms/resources
+* Lizenz: Datenlizenz Deutschland Namensnennung 2.0
+
+
 To be checked
 =============
 
 * https://www.heise.de/newsticker/meldung/Corona-Statistik-in-Deutschland-Noch-mehr-Durcheinander-4687788.html
 * https://coronawiki.net/index.php?title=Datenquellen
+* https://docs.google.com/document/d/1_KwL44pFDbcLqbf8jsVpCB62PtwJUXoGTTPcI8ExEsU/edit
