@@ -291,6 +291,18 @@ Example:
 
 .. code-block:: JSON
 
+  {
+    "adm": [
+      "FR",
+      "45"
+    ],
+    "sex": "m",
+    "released_from_hospital_total": 3,
+    "hospitalized_current": 19,
+    "critical_care_current": 9,
+    "deaths_total": 0,
+    "timestamp": 1584831600
+  }
 
 
 References
