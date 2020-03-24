@@ -6,6 +6,9 @@ Datapool of COVID-19 cases
 **THE PROJECT IS IN A PROVE OF CONCEPT PHASE - EVERYTHING MIGHT
 CHANGE**
 
+Nevertheless it is possible to already retreive complete data sets.
+
+
 PLEASE HELP!
 ============
 
@@ -224,6 +227,19 @@ https://docs.google.com/spreadsheets/d/1hequqFkVIsF_BCMm4IlHJAWmHI7EcVbV4PvSPQu7
 
 Currently only a mapping of the country is done - as the region
 mapping is not yet available.
+
+
+References
+==========
+
+Tidying the new Johns Hopkins Covid-19 time-series datasets
+-----------------------------------------------------------
+
+URL: https://joachim-gassen.github.io/2020/03/tidying-the-new-johns-hopkins-covid-19-datasests/
+
+The first step looks very similar to the current implemntation here:
+tidy up the data, mapping regions / countries to ISO codes, ...
+
 
 
 Thanks

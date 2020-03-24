@@ -91,6 +91,26 @@ Stadt Münster
 To be checked
 =============
 
+* https://docs.google.com/document/d/1DMAisYOtO1RZU7OVzppxrlRGVhjzJNq3eRiKbNHKC-g/edit?ts=5e754850#
 * https://www.heise.de/newsticker/meldung/Corona-Statistik-in-Deutschland-Noch-mehr-Durcheinander-4687788.html
 * https://coronawiki.net/index.php?title=Datenquellen
 * https://docs.google.com/document/d/1_KwL44pFDbcLqbf8jsVpCB62PtwJUXoGTTPcI8ExEsU/edit
+* https://docs.google.com/spreadsheets/d/13la9BFcPUeZKnx6amfwogzmhcNxtF_ouBiV6aOpDHFM/edit#gid=0
+* https://devpost.com/software/38_herausforderung_0193_zentrale_datenbank#updates
+* https://devpost.com/software/1757_flattenthecurve_predictivemodeling-tyeo67
+* https://paul-em.github.io/wir-vs-virus/ (GUI)
+* https://github.com/wutzi15/Corvid19API
+* https://bene.gridpiloten.de:4712/api/ui/
+* https://github.com/paul-em/wir-vs-virus
+* https://github.com/joshuakuepper/Challenge-1757 (Modelling)
+* https://docs.google.com/spreadsheets/d/1hequqFkVIsF_BCMm4IlHJAWmHI7EcVbV4PvSPQu7hpc/edit#gid=1514093616
+* https://docs.google.com/spreadsheets/d/1CW99DTTWFO5T3oiERzRaHGqpAQ_J-3PfwaMibUgJp4Y/edit#gid=262317549
+* https://docs.google.com/spreadsheets/d/1ta2k0JLH-2fbTrpSptxa5wTo5Al3aLQ-b5H7vBVgd0M/edit#gid=0
+* https://devpost.com/software/038_daten_infektionszahlenschatzen
+* https://devpost.com/software/1_038_a_daten_datawarehousing
+
+
+Modelling
+=========
+
+* https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Modellierung_Deutschland.pdf?__blob=publicationFile
