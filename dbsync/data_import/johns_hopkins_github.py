@@ -1,5 +1,5 @@
 '''
-File which imlements the data import of
+File which implements the data import of
 the Johns Hopkins CSSE data set
 '''
 
@@ -31,6 +31,7 @@ def convert2int(s):
     if s == '':
         return 0
     return int(s)
+
 
 def convert_ts(ts_str):
     '''A generic date / time converter.
@@ -77,6 +78,56 @@ def handle_one_data_line_2020_02(line):
         }
 
         sha_str = str(ts) + line[1] + line[3] + line[4] + line[5]
+
+        return nd, hashlib.sha256(sha_str.encode("utf-8")).hexdigest()
+
+    except ValueError as ve:
+        # If there is a problem e.g. converting the ts
+        # just go on.
+        print("ERROR converting [%s]: [%s]" (line, ve))
+
+
+def handle_one_data_line_2020_03(line):
+    '''Converts one data line into json
+
+    Format of the input data:
+     0       1            2           3                 4
+    FIPS, Admin2, Province/State, Country/Region, Last Update,( Latitude,/
+    Longitude), Confirmed, Deaths, Recovered, Active
+                    5        6         7        8
+
+    Latitude and Longitude are ignored (as they change from time to time
+    even for the same place). IHMO there are better ways to map the adm
+    fields to geographical data.
+    '''
+    # TODO: change method, so it fits to the new dataset
+    try:
+        ts = convert_ts(line[4])
+
+        location = [line[2]]
+        if line[3] != '':
+            location.append(line[3])
+
+        # The 'strip()' is needed because of incorrect input data, e.g.
+        # , Azerbaijan,2020-02-28T15:03:26,1,0,0
+        adm = [country2iso[line[1].strip()], ]
+        # TODO: They are probably new columns
+        nd = {
+            'timestamp': ts,
+            'FIPS': convert2int(line[0]),
+            'Admin2': line[1],
+            'confirmed': convert2int(line[5]),
+            'deaths': convert2int(line[6]),
+            'recovered': convert2int(line[7]),
+            'active': convert2int(line[8]),
+            'source': 'Johns-Hopkins-github',
+            'original': {
+                'location': location
+            },
+            'adm': adm,
+        }
+
+        sha_str = str(ts) + line[1] + line[3] + line[4] + line[5] + line[6] + line[7] + line[8]
 
         return nd, hashlib.sha256(sha_str.encode("utf-8")).hexdigest()
 
