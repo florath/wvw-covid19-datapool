@@ -1,10 +1,8 @@
 Datapool of COVID-19 cases
 ++++++++++++++++++++++++++
 
-**THIS PROJECT IS CURRENTLY UNDER DEVELOPMENT AND NOT YET USABLE**
-
 **THE PROJECT IS IN A PROVE OF CONCEPT PHASE - EVERYTHING MIGHT
-CHANGE**
+CHANGE ON SHORT NOTICE**
 
 Nevertheless it is possible to already retreive complete data sets.
 
