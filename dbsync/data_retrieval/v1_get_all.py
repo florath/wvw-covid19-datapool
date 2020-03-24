@@ -9,7 +9,8 @@ def v1_get_all_cases_source(source):
     print("Called v1_get_all_cases_source; source [%s]" % source)
 
     # Check if the source really exists
-    if source not in ['johns_hopkins_github', 'ecdc_xlsx']:
+    if source not in ['johns_hopkins_github', 'ecdc_xlsx',
+                      'gouv_fr_hospital_numbers']:
         print("Invalid source [%s]" % source)
         return []
     

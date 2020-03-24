@@ -5,6 +5,7 @@ from flask import Flask
 
 from data_import.johns_hopkins_github import import_data_johns_hopkins_github
 from data_import.ecdc_xlsx import import_data_ecdc_xlsx
+from data_import.gouv_fr import import_data_gouv_fr
 from data_retrieval.v1_get_all import v1_get_all_cases_source
 
 
@@ -33,6 +34,8 @@ def update_data(source):
         import_data_johns_hopkins_github()
     if source == 'ecdc_xlsx':
         import_data_ecdc_xlsx()
+    if source == 'gouv_fr':
+        import_data_gouv_fr()
     else:
         print("*** ERROR: unknown source [%s]" % source)
 
