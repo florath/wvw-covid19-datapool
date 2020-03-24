@@ -18,7 +18,7 @@ wrong numbers.
   into the locally used JSON format
 
 
-Warning & Use of data
+Warning & Term of Use
 =====================
 
 Before using this database read the documentation of the data which
@@ -38,6 +38,22 @@ were transmitted electronically.  Data which is transmitted by snail
 mail or by fax is currently not included because this would exceed the
 capacity of the RKI.  Therefore complete regions might have much
 higher numbers.
+
+
+For the Impatient
+=================
+
+This is not the recommended way - but the only currently
+implemented.  So stay in touch for possible changes.
+
+Get complete data sets. Return JSON list of arrays of dicts. Two data
+sets are currently implemented: 
+
+.. code:: bash
+
+   curl https://wirvsvirushackathon-271718.appspot.com/v1/get_all/cases/source/ecdc_xlsx
+
+   curl https://wirvsvirushackathon-271718.appspot.com/v1/get_all/cases/source/johns_hopkins_github
 
 
 Introduction
@@ -70,34 +86,22 @@ Database
 The database provides data from different sources about COVID-19.  The
 data is unified (has the same format) and converted to JSON.
 
-**IS THIS REALLY THE CORRECT WAY??? THE PROBLEM IS, THAT IT IS MOSTLY
-NOT DECIDABLE WHAT A PRIMARY AND A SECONDARY SOURCE IS. IN THIS SENSE
-EVEN RKI DATA ARE 'SECONDARY' AS THEY ARE COLLECTED FROM THE
-GESUNDHEITSÄMTER.**
-
-
 Layout
 ------
 
 .. code::
 
    cases (collection)
-   |- data (document)
-      |- primary (collection)
-      |  |- case data (infected, recovered, deaths, tests, ...) (documents)
-      |
-      |- secondary (collection)
-         |- collections (document)
-            |- source1 (collection)
-            |  |- data (documents)
-            |- source2 (collection)
-            |  |- data (documents)
+   |- sources (document)
+      |- source1 (collection)
+      |  |- data (documents)
+      |- source2 (collection)
+      |  |- data (documents)
 
-The reason for having a top level 'primary' and 'secondary' collection
-is, that some sources (e.g. Johns Hopkins data set) is already a
-collection of other data sets.  Merging primary and secondary in one
-collection is incorrect because it might lead to double counted
-cases.
+The initial idea to have a worldwide unified database can currently
+not be implemented.  There are too many uncertainties and unknowns
+which data set possible includes another.  Therefor for the time
+being, the data is only unified and converted to JSON.
 
 Data
 ----
@@ -113,6 +117,8 @@ REST Interface
 ==============
 
 TBD.
+
+Add: last updated timestamp
 
 
 Deployment
@@ -175,7 +181,7 @@ Data path:
 
 .. code::
 
-   cases/secondary/ecdc-xlsx
+   cases/sources/ecdc-xlsx
 
 https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
 
@@ -196,11 +202,14 @@ statistical analysis or reporting purposes.*
 Johns Hopkins GitHub
 --------------------
 
+**Due to a change in the data set, the latest data from today
+(2020-03-24) is not yet imported.**
+
 Data path:
 
 .. code::
 
-   cases/secondary/johns-hopkins-github
+   cases/sources/johns-hopkins-github
 
 https://github.com/CSSEGISandData/COVID-19
 
