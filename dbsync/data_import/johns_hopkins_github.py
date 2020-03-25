@@ -33,6 +33,14 @@ def convert2int(s):
     return int(s)
 
 
+def convert2float(s):
+    '''Converts the given string to a Floating-Point Number. If the string is empty, return 0.
+    This is necessary for longitude and latitude.'''
+    if s == '':
+        return 0;
+    return float(s)
+
+
 def convert_ts(ts_str):
     '''A generic date / time converter.
 
@@ -91,16 +99,12 @@ def handle_one_data_line_2020_03(line):
     '''Converts one data line into json
 
     Format of the input data:
-     0       1            2           3                 4
-    FIPS, Admin2, Province/State, Country/Region, Last Update,( Latitude,/
-    Longitude), Confirmed, Deaths, Recovered, Active
-                    5        6         7        8
-
-    Latitude and Longitude are ignored (as they change from time to time
-    even for the same place). IHMO there are better ways to map the adm
-    fields to geographical data.
+     0       1            2           3                 4         5
+    FIPS, Admin2, Province/State, Country/Region, Last Update, Latitude,/
+    Longitude, Confirmed, Deaths, Recovered, Active
+        6          7        8         9        10
     '''
-    # TODO: change method, so it fits to the new dataset
+
     try:
         ts = convert_ts(line[4])
 
@@ -110,16 +114,16 @@ def handle_one_data_line_2020_03(line):
 
         # The 'strip()' is needed because of incorrect input data, e.g.
         # , Azerbaijan,2020-02-28T15:03:26,1,0,0
-        adm = [country2iso[line[1].strip()], ]
-        # TODO: They are probably new columns
+        adm = [country2iso[line[1].strip()], convert2int(line[0]), line[1]]
+
         nd = {
             'timestamp': ts,
-            'FIPS': convert2int(line[0]),
-            'Admin2': line[1],
-            'confirmed': convert2int(line[5]),
-            'deaths': convert2int(line[6]),
-            'recovered': convert2int(line[7]),
-            'active': convert2int(line[8]),
+            'latitude': convert2float(line[5]),
+            'longitude': convert2float(line[6]),
+            'confirmed': convert2int(line[7]),
+            'deaths': convert2int(line[8]),
+            'recovered': convert2int(line[9]),
+            'active': convert2int(line[10]),
             'source': 'Johns-Hopkins-github',
             'original': {
                 'location': location
@@ -153,8 +157,7 @@ def get_callback_based_on_header(header):
     if header == ['FIPS', 'Admin2', 'Province_State', 'Country_Region',
                   'Last_Update', 'Lat', 'Long_', 'Confirmed', 'Deaths',
                   'Recovered', 'Active', 'Combined_Key']:
-        print("New format not yet implemented")
-        return None
+        return handle_one_data_line_2020_03
     
     print("Unknown header in datafile [%s]" % header)
     return None
