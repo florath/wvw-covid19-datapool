@@ -37,7 +37,7 @@ def convert2float(s):
     '''Converts the given string to a Floating-Point Number. If the string is empty, return 0.
     This is necessary for longitude and latitude.'''
     if s == '':
-        return 0;
+        return 0.0
     return float(s)
 
 
@@ -101,8 +101,11 @@ def handle_one_data_line_2020_03(line):
     Format of the input data:
      0       1            2           3                 4         5
     FIPS, Admin2, Province/State, Country/Region, Last Update, Latitude,/
-    Longitude, Confirmed, Deaths, Recovered, Active
-        6          7        8         9        10
+    Longitude, Confirmed, Deaths, Recovered, (Active)
+        6          7        8         9
+
+    Active is ignored, because it is not clear what is meant by Active.
+    It seems like almost all entries are filled with 0.
     '''
 
     try:
@@ -123,7 +126,6 @@ def handle_one_data_line_2020_03(line):
             'confirmed': convert2int(line[7]),
             'deaths': convert2int(line[8]),
             'recovered': convert2int(line[9]),
-            'active': convert2int(line[10]),
             'source': 'Johns-Hopkins-github',
             'original': {
                 'location': location
@@ -131,7 +133,7 @@ def handle_one_data_line_2020_03(line):
             'adm': adm,
         }
 
-        sha_str = str(ts) + line[1] + line[3] + line[4] + line[5] + line[6] + line[7] + line[8]
+        sha_str = str(ts) + line[1] + line[3] + line[4] + line[5] + line[6] + line[7] + line[8] + line[9]
 
         return nd, hashlib.sha256(sha_str.encode("utf-8")).hexdigest()
 
