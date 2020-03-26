@@ -5,19 +5,19 @@ the Stadt Muenster data set.
 
 import hashlib
 import csv
-from data_import.lib.utils import import_data_collection, get_available_data_ids
-from google.cloud import firestore
 import os
 import shutil
+from data_import.lib.utils import import_data_collection, get_available_data_ids
+from google.cloud import firestore
 import git
 
 GIT_REPO_URL = "https://github.com/od-ms/resources.git"
 DATA_DIR = "coronavirus-fallzahlen-regierungsbezirk-muenster.csv"
 
 
-def convert2int(s):
+def convert2int(chars):
     '''Converts given string to int.'''
-    return int(s)
+    return int(chars)
 
 
 def convert_one_line(line):
@@ -53,13 +53,14 @@ def convert_one_line(line):
         return row, hashlib.sha256(hash_str.encode("utf-8")).hexdigest()
 
     except ValueError as value:
-        print("ERROR converting [%s]: [%s]"(line, value))
+        print("ERROR converting {} : {}", line, value)
 
 
 def read_csv_file(tab_ref, data_available_ids, fname):
+    '''Reads from a csv file.'''
     with open(fname, newline='') as csvfile:
         content = csv.reader(csvfile, delimiter=',', quotechar='"')
-        if content == None:
+        if content is None:
             print("No callback available for the data file [%s] - skipping" % fname)
             return
         import_data_collection(content, tab_ref, data_available_ids)
@@ -92,10 +93,12 @@ def update_git():
 
 
 def import_dataset():
+    '''Updates the data from the data set of Stadt Muenster.'''
     print("Called import_dataset for the data from Stadt Muenster")
     update_git()
     update_data()
     print("Finished import_dataset")
+
 
 if __name__ == 'main':
     '''For (local) testing: only update the data'''
