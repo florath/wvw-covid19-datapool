@@ -3,13 +3,15 @@ File which implements the data import of
 the Stadt Muenster data set.
 '''
 
-# TODO: implement function, which reads a csv file
 # TODO: implement function, which updates data
 # TODO: implement function, which imports one data set
 # TODO: implement function, which opens the right repo
 # TODO: implement function, which converts str to int
 
 import hashlib
+import csv
+from data_import.lib.utils import import_data_collection, get_available_data_ids
+
 
 def convert_one_line(line):
     '''Converts one data line into json.
@@ -36,4 +38,13 @@ def convert_one_line(line):
 
     except ValueError as value:
         print("ERROR converting [%s]: [%s]"(line, value))
+
+
+def read_csv_file(tab_ref, data_available_ids, fname):
+    with open(fname, newline='') as csvfile:
+        content = csv.reader(csvfile, delimiter=',', quotechar='"')
+        if content == None:
+            print("No callback available for the data file [%s] - skipping" % fname)
+            return
+        import_data_collection(content, tab_ref, data_available_ids)
 
