@@ -3,15 +3,13 @@ File which implements the data import of
 the Stadt Muenster data set.
 '''
 
-# TODO: implement function, which updates data
-# TODO: implement function, which imports one data set
-# TODO: implement function, which opens the right repo
-
 import hashlib
 import csv
 from data_import.lib.utils import import_data_collection, get_available_data_ids
 from google.cloud import firestore
 import os
+import shutil
+import git
 
 GIT_REPO_URL = "https://github.com/od-ms/resources.git"
 DATA_DIR = "coronavirus-fallzahlen-regierungsbezirk-muenster.csv"
@@ -20,6 +18,7 @@ DATA_DIR = "coronavirus-fallzahlen-regierungsbezirk-muenster.csv"
 def convert2int(s):
     '''Converts given string to int.'''
     return int(s)
+
 
 def convert_one_line(line):
     '''Converts one data line into json.
@@ -81,3 +80,23 @@ def update_data():
         if fname.endswith(".csv"):
             read_csv_file(tab_ref, data_available_ids, os.path.join(DATA_DIR, fname))
 
+
+def update_git():
+    '''Update the git repo
+
+    This is a very first basic implementation which clones the repo every time.
+    Later on this can be changed in (just) updating a possible existing one.
+    '''
+    shutil.rmtree(GIT_REPO_URL, ignore_errors=True)
+    repo = git.Repo.clone_from(GIT_REPO_URL, GIT_REPO_URL, depth=1)
+
+
+def import_dataset():
+    print("Called import_dataset for the data from Stadt Muenster")
+    update_git()
+    update_data()
+    print("Finished import_dataset")
+
+if __name__ == 'main':
+    '''For (local) testing: only update the data'''
+    update_data()
