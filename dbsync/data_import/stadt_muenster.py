@@ -6,13 +6,19 @@ the Stadt Muenster data set.
 # TODO: implement function, which updates data
 # TODO: implement function, which imports one data set
 # TODO: implement function, which opens the right repo
-# TODO: implement function, which converts str to int
 
 import hashlib
 import csv
 from data_import.lib.utils import import_data_collection, get_available_data_ids
+from google.cloud import firestore
+import os
 
-def convert_2int(s):
+GIT_REPO_URL = "https://github.com/od-ms/resources.git"
+DATA_DIR = "coronavirus-fallzahlen-regierungsbezirk-muenster.csv"
+
+
+def convert2int(s):
+    '''Converts given string to int.'''
     return int(s)
 
 def convert_one_line(line):
@@ -29,10 +35,10 @@ def convert_one_line(line):
         todesfaelle = None
 
         if line[3] != '':
-            gesundete = convert_2int(gesundete)
+            gesundete = convert2int(gesundete)
 
         if line[4] != '':
-            todesfaelle = convert_2int(todesfaelle)
+            todesfaelle = convert2int(todesfaelle)
 
         # always standard german time format DD/MM/YYYY
         row = {
@@ -58,4 +64,20 @@ def read_csv_file(tab_ref, data_available_ids, fname):
             print("No callback available for the data file [%s] - skipping" % fname)
             return
         import_data_collection(content, tab_ref, data_available_ids)
+
+
+def update_data():
+    '''Reads data from the git repo, converts them and pushes them into the Database.
+        I need the parameters for reading the data.
+        I have no idea what's the name of the collection and the document'''
+    db = firestore.Client()
+    tab_ref = db.collection() \
+        .document() \
+        .collection()
+
+    data_available_ids = get_available_data_ids(tab_ref)
+
+    for fname in os.listdir(DATA_DIR):
+        if fname.endswith(".csv"):
+            read_csv_file(tab_ref, data_available_ids, os.path.join(DATA_DIR, fname))
 
