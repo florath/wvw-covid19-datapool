@@ -111,13 +111,9 @@ def handle_one_data_line_2020_03(line):
     try:
         ts = convert_ts(line[4])
 
-        location = [line[2]]
-        if line[3] != '':
-            location.append(line[3])
-
         # The 'strip()' is needed because of incorrect input data, e.g.
         # , Azerbaijan,2020-02-28T15:03:26,1,0,0
-        adm = [country2iso[line[1].strip()], convert2int(line[0]), line[1]]
+        adm = [country2iso[line[3].strip()], line[2], line[1], convert2int(line[0])]
 
         nd = {
             'timestamp': ts,
@@ -128,7 +124,7 @@ def handle_one_data_line_2020_03(line):
             'recovered': convert2int(line[9]),
             'source': 'Johns-Hopkins-github',
             'original': {
-                'location': location
+                'location': [line[3], line[2], line[1], line[0]]
             },
             'adm': adm,
         }
