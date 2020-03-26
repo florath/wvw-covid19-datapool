@@ -12,6 +12,8 @@ import hashlib
 import csv
 from data_import.lib.utils import import_data_collection, get_available_data_ids
 
+def convert_2int(s):
+    return int(s)
 
 def convert_one_line(line):
     '''Converts one data line into json.
@@ -23,13 +25,22 @@ def convert_one_line(line):
         I have to translate them into english'''
 
     try:
+        gesundete = None
+        todesfaelle = None
+
+        if line[3] != '':
+            gesundete = convert_2int(gesundete)
+
+        if line[4] != '':
+            todesfaelle = convert_2int(todesfaelle)
+
         # always standard german time format DD/MM/YYYY
         row = {
             'gebiet': line[0],
             'datum': line[1],
             'bestaetigte faelle': line[2],
-            'gesundete': line[3],
-            'todesfaelle': line[4]
+            'gesundete': gesundete,
+            'todesfaelle': todesfaelle,
             'source': 'Stadt Muenster'
         }
 
