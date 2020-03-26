@@ -1,5 +1,5 @@
 '''
-File which imlements the data import of
+File which implements the data import of
 the Johns Hopkins CSSE data set
 '''
 
@@ -31,6 +31,15 @@ def convert2int(s):
     if s == '':
         return 0
     return int(s)
+
+
+def convert2float(s):
+    '''Converts the given string to a Floating-Point Number. If the string is empty, return 0.
+    This is necessary for longitude and latitude.'''
+    if s == '':
+        return 0.0
+    return float(s)
+
 
 def convert_ts(ts_str):
     '''A generic date / time converter.
@@ -86,6 +95,54 @@ def handle_one_data_line_2020_02(line):
         print("ERROR converting [%s]: [%s]" (line, ve))
 
 
+def handle_one_data_line_2020_03(line):
+    '''Converts one data line into json
+
+    Format of the input data:
+     0       1            2           3                 4         5
+    FIPS, Admin2, Province/State, Country/Region, Last Update, Latitude,/
+    Longitude, Confirmed, Deaths, Recovered, (Active)
+        6          7        8         9
+
+    Active is ignored, because it is not clear what is meant by Active.
+    It seems like almost all entries are filled with 0.
+    '''
+
+    try:
+        ts = convert_ts(line[4])
+
+        location = [line[2]]
+        if line[3] != '':
+            location.append(line[3])
+
+        # The 'strip()' is needed because of incorrect input data, e.g.
+        # , Azerbaijan,2020-02-28T15:03:26,1,0,0
+        adm = [country2iso[line[1].strip()], convert2int(line[0]), line[1]]
+
+        nd = {
+            'timestamp': ts,
+            'latitude': convert2float(line[5]),
+            'longitude': convert2float(line[6]),
+            'confirmed': convert2int(line[7]),
+            'deaths': convert2int(line[8]),
+            'recovered': convert2int(line[9]),
+            'source': 'Johns-Hopkins-github',
+            'original': {
+                'location': location
+            },
+            'adm': adm,
+        }
+
+        sha_str = str(ts) + line[1] + line[3] + line[4] + line[5] + line[6] + line[7] + line[8] + line[9]
+
+        return nd, hashlib.sha256(sha_str.encode("utf-8")).hexdigest()
+
+    except ValueError as ve:
+        # If there is a problem e.g. converting the ts
+        # just go on.
+        print("ERROR converting [%s]: [%s]" (line, ve))
+
+
 def get_callback_based_on_header(header):
     '''Depending on the header return the appropriate callback function'''
 
@@ -102,8 +159,7 @@ def get_callback_based_on_header(header):
     if header == ['FIPS', 'Admin2', 'Province_State', 'Country_Region',
                   'Last_Update', 'Lat', 'Long_', 'Confirmed', 'Deaths',
                   'Recovered', 'Active', 'Combined_Key']:
-        print("New format not yet implemented")
-        return None
+        return handle_one_data_line_2020_03
     
     print("Unknown header in datafile [%s]" % header)
     return None
