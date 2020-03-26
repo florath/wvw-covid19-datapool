@@ -7,6 +7,7 @@ import io
 import requests
 import json
 import hashlib
+import re
 from html.parser import HTMLParser
 from data_import.lib.utils import import_data_collection, get_available_data_ids
 from google.cloud import firestore
@@ -14,9 +15,6 @@ import dateutil.parser
 
 
 URL_HTML_PAGE = "https://www.data.gouv.fr/en/datasets/donnees-relatives-a-lepidemie-du-covid-19"
-DATA_DOWNLOAD_PREFIX = [
-    'donnees-hospitalieres-covid19'
-]
 
 
 class GouvFrHTMLParser(HTMLParser):
@@ -44,7 +42,7 @@ class GouvFrHTMLParser(HTMLParser):
         return self.__script
 
 
-def handle_one_line(line):
+def handle_gouv_fr_hospital(line):
     '''Converts one line into json
 
     Format of the input data:
@@ -88,10 +86,69 @@ def handle_one_line(line):
     return nd, hashlib.sha256(sha_str.encode("utf-8")).hexdigest()
 
 
-def download_html():
+def handle_gouv_fr_hospital_establishments(line):
+    '''Converts one line into json'''
+    print(line)
+    assert False
+
+
+def not_implemented():
+    assert False
+
+
+# These are the data which are needed for handling the different
+# files.
+# For each data set there is given:
+# 0: the name of the dataset as it is used in the DB
+# 1: a regular expression which matches the data file name
+# 2: the callback which handles the data
+DATA_MAPPING = [
+    [ 'gouv_fr_hospital',
+      re.compile('donnees-hospitalieres-covid19.*'),
+      handle_gouv_fr_hospital ],
+    [ 'gouv_fr_hospital_establishments',
+      re.compile('donnees-hospitalieres-etablissements-covid19.*'),
+      handle_gouv_fr_hospital_establishments],
+    [ 'gouv_fr_covid19_daily',
+      re.compile('sursaud-covid19-quotidien.*'),
+      not_implemented],
+    [ 'gouv_fr_covid19_weekly',
+      re.compile('sursaud-covid19-hebdomadaire.*'),
+      not_implemented],
+    # The following is the description (metadata) of the
+    # data itself. This is not statistical data and
+    # implemented into the source code (used for mapping).
+    [ None,
+      re.compile('metadonnees-donnees-hospitalieres-covid19.*'),
+      None ],
+    [ None,
+      re.compile('metadonnees-services-hospitaliers-covid19.csv'),
+      None ],
+    [ None,
+      re.compile('metadonnee-urgenceshos-sosmedecins-covid19-quot.csv'),
+      None ],
+    [ None,
+      re.compile('metadonnee-urgenceshos-sosmedecins-covid19-hebdo.csv'),
+      None ],
+    [ None,
+      re.compile('code-tranches-dage.csv'),
+      None ],
+]
+
+def match_filename(fname):
+    '''Uses the data mapping table to get the correct entry'''
+    for dm in DATA_MAPPING:
+        if dm[1].match(fname):
+            return dm
+    print("ERROR: Filename does not match [%s]" % fname)
+    return None
+
+
+def download_master_html():
     '''Download the main html page
 
-    This is needed as this seams to be the only source of 
+    The master page is the HTML page that contains links to all data
+    files. This is needed as this seams to be the only source of 
     the filenames.
     '''
     html_file = requests.get(URL_HTML_PAGE)
@@ -99,40 +156,58 @@ def download_html():
     parser.feed(html_file.text)
     jdata = json.loads(parser.get_script_data())
 
-    datadict = {}
+    datalist = []
     for dist in jdata['distribution']:
         if dist['@type'] != 'DataDownload':
-            print("WARNING: distribution entry which is not a download [%s]"
-                  % dist)
+            print("WARNING: distribution entry which is not a "
+                  "download [%s]" % dist)
             continue
-        for ddn in DATA_DOWNLOAD_PREFIX:
-            if dist['name'].startswith(ddn):
-                datadict[ddn] = dist
-    # ToDo: Have an indicator when something new is added to the WEB page
-    return datadict
+
+        data_map = match_filename(dist['name'])
+        if data_map is None:
+            print("ERROR: No handler for the file [%s] is available"
+                  % dist['name'])
+            continue
+        if data_map[0] is None:
+            print("INFO: skipping metadata file [%s]" % dist['name'])
+            continue
+        datalist.append([data_map, dist])
+
+    return datalist
 
 
-def update_data(datadict):
+def update_data(datapool):
+    '''Update data in the database given the datasource 'data'
+    '''
+    data = datapool[0]
+    dist = datapool[1]
+    print("Update data [%s]" % data[0])
+
+    print(data)
+    
     db = firestore.Client()
     tab_ref = db.collection(u"cases")\
                 .document("sources")\
-                .collection("gouv_fr_hospital_numbers")
+                .collection(data[0])
 
     data_available_ids = get_available_data_ids(tab_ref)
 
-    for key, val in datadict.items():
-        csv_content = requests.get(val['contentUrl'])
-        with io.StringIO(csv_content.text) as fd:
-            csv_file = csv.reader(fd, delimiter=';', quotechar='"')
-            # Skip header
-            next(csv_file)
-            import_data_collection(csv_file, handle_one_line, tab_ref, data_available_ids)
+    csv_content = requests.get(dist['contentUrl'])
+    with io.StringIO(csv_content.text) as fd:
+        csv_file = csv.reader(fd, delimiter=';', quotechar='"')
+        # Skip header
+        next(csv_file)
+        import_data_collection(csv_file, data[2],
+                               tab_ref, data_available_ids)
+    print("Finished updating data [%s]" % data[0])
 
 
 def import_data_gouv_fr():
     print("Called import_data_gouv_fr")
-    datadict = download_html()
-    update_data(datadict)
+    datalist = download_master_html()
+    print(datalist)
+    for data in datalist:
+        update_data(data)
     print("Finished import_data_gouv_fr")
 
 
