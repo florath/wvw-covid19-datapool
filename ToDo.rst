@@ -1,9 +1,6 @@
 Cleanup and Basics
 ++++++++++++++++++
 
-* Add another level in DB for different use cases (e.g. production,
-  pre-production, test, development, ...)
-
 * Unify location information.
   Suggestion:
 

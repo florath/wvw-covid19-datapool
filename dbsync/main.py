@@ -22,10 +22,10 @@ QUEUE = "data-import"
 @app.route('/v1/get_all/cases/source/<source>')
 def lv1_get_all_cases_source(source):
     environment = request.args.get("env", default="prod", type=str)
-    rdata, rcode=json.dumps(v1_get_all_cases_source(environment, source))
+    rdata, rcode = v1_get_all_cases_source(environment, source)
     response = app.response_class(
         status=rcode,
-        response=rdata,
+        response=json.dumps(rdata),
         mimetype='application/json'
     )
     return response
@@ -89,10 +89,10 @@ def import_data():
         if source == 'johns_hopkins_github':
             import_data_johns_hopkins_github(
                 jdata['environment'], jdata['ignore-errors'])
-        if source == 'ecdc_xlsx':
+        elif source == 'ecdc_xlsx':
             import_data_ecdc_xlsx(
                 jdata['environment'], jdata['ignore-errors'])
-        if source == 'gouv_fr':
+        elif source == 'gouv_fr':
             import_data_gouv_fr(
                 jdata['environment'], jdata['ignore-errors'])
         else:

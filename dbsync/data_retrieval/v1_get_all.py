@@ -21,7 +21,8 @@ def v1_get_all_cases_source(environment, source):
         return '["Invalid source"]', 422
     
     db = firestore.Client()
-    tab_ref = db.document(environment)\
+    tab_ref = db.collection("covid19datapool")\
+                .document(environment)\
                 .collection("cases")\
                 .document("sources")\
                 .collection(source)

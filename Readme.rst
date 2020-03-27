@@ -89,22 +89,6 @@ Database
 The database provides data from different sources about COVID-19.  The
 data is unified (has the same format) and converted to JSON.
 
-Layout
-------
-
-.. code::
-
-   cases (collection)
-   |- sources (document)
-      |- source1 (collection)
-      |  |- data (documents)
-      |- source2 (collection)
-      |  |- data (documents)
-
-The initial idea to have a worldwide unified database can currently
-not be implemented.  There are too many uncertainties and unknowns
-which data set possible includes another.  Therefor for the time
-being, the data is only unified and converted to JSON.
 
 Data
 ----
@@ -142,6 +126,32 @@ Example:
     ]
   }
 
+
+Layout
+------
+
+This is only for those who are interesed in: for a 'normal' user there
+is no need for this.
+
+.. code::
+
+   covid19datapool (collection)
+   |- test (document) [Environment]
+      |- cases (collection)
+      |  |- sources (document)
+      |     |- source1 (collection)
+      |     |  |- data (documents)
+      |     |- source2 (collection)
+      |     |  |- data (documents)
+      prod (document)
+      |- cases (collection)
+         |- sources (document)
+         --- same as above ---
+
+The initial idea to have a worldwide unified database can currently
+not be implemented.  There are too many uncertainties and unknowns
+which data set possible includes another.  Therefor for the time
+being, the data is only unified and converted to JSON.
 
 
 REST Interface

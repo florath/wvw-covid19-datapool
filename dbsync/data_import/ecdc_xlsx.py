@@ -32,13 +32,26 @@ def download_xlsx():
     os.mkdir(LOCAL_DATA_DIR)
 
     now = datetime.datetime.now()
-    download_url = ECDC_URL % (now.year, now.month, now.day)
-    print("Download URL [%s]" % download_url)
-    
-    xlxs_file = requests.get(download_url)
+
+    # Try for the last five days and use the newest.
+    for dl_ts in range(0, 5):
+        download_url = ECDC_URL % (now.year, now.month, now.day)
+        print("Download URL [%s]" % download_url)
+
+        xlsx_file = requests.get(download_url)
+        if xlsx_file.ok:
+            break
+
+        now -= datetime.timedelta(days=1)
+
+    if not xlsx_file.ok:
+        print("No valid file found")
+        return False
 
     with open(LOCAL_DATA_FILE, "wb") as fd:
-        fd.write(xlxs_file.content)
+        fd.write(xlsx_file.content)
+
+    return True
 
 
 def handle_one_data_line(line):
@@ -71,14 +84,16 @@ def handle_one_data_line(line):
     return nd, hashlib.sha256(sha_str.encode("utf-8")).hexdigest()
 
 
-def update_data():
+def update_data(environment):
     '''Reads in the data from the xlsx file, converts it and pushes it
     into the DB'''
     wb = load_workbook(LOCAL_DATA_FILE, read_only=True)
     sheet_ranges = wb['COVID-19-geographic-disbtributi']
 
     db = firestore.Client()
-    tab_ref = db.collection(u"cases")\
+    tab_ref = db.collection("covid19datapool")\
+                .document(environment) \
+                .collection(u"cases")\
                 .document("sources")\
                 .collection("ecdc_xlsx")
 
@@ -91,14 +106,14 @@ def update_data():
                            data_available_ids)
 
 
-def import_data_ecdc_xlsx():
-    print("Called import_data_ecdc_xlsx")
-    download_xlsx()
-    update_data()
+def import_data_ecdc_xlsx(environment, ignore_errors):
+    print("import_data_ecdc_xlsx called [%s] [%s]" %
+          (environment, ignore_errors))
+    if download_xlsx():
+        update_data(environment)
     print("Finished import_data_ecdc_xlsx")
 
 
 if __name__ == '__main__':
     '''For (local) testing: only update the data'''
     update_data()
-

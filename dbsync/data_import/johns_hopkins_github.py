@@ -188,7 +188,8 @@ def update_data(tmp_dir, environment):
     print("update_data called [%s] [%s]" % (tmp_dir, environment))
     print("update_data creating connection to Firestore")
     db = firestore.Client()
-    tab_ref = db.document(environment) \
+    tab_ref = db.collection("covid19datapool")\
+                .document(environment) \
                 .collection("cases")\
                 .document("sources")\
                 .collection("johns_hopkins_github")
