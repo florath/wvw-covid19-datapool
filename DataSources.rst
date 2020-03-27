@@ -41,14 +41,6 @@ Ministerium für Arbeit, Gesundheit und Soziales des Landes Nordrhein-Westfalen
 * Result: **data cannot be used**
 
 
-Open Data der Stadt Münster
----------------------------
-
-* URL: https://github.com/od-ms/resources
-* License: No license provided
-* Result: **data cannot be used**
-  
-
 RKI (Germany)
 -------------
 
@@ -110,6 +102,13 @@ To be checked
 * https://devpost.com/software/1_038_a_daten_datawarehousing
 
 
+Data Visualization
+==================
+
+* http://shiny.science.ku.dk/pbm/COVID19%20-%20Copy/
+* https://devpost.com/software/038_daten_infektionszahlenschatzen
+
+  
 Modelling
 =========
 

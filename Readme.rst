@@ -178,12 +178,20 @@ number of calls, used CPU, outbound network traffic, ... costs.**
    :code:`gcloud iam service-accounts keys create ${WVV_GCLOUD_SERVACC}.json --iam-account "${WVV_GCLOUD_SERVACC}@${WVV_GCLOUD_PROJECT}.iam.gserviceaccount.com"`
 #. Set the environment variable:
    :code:`export GOOGLE_APPLICATION_CREDENTIALS="${PWD}/${WVV_GCLOUD_SERVACC}.json"`
+#. Create task queue:
+   :code:`gcloud tasks queues create data-import --project ${WVV_GCLOUD_PROJECT}`
+   :code:`gcloud tasks queues update data-import --max-attempts=1 --project ${WVV_GCLOUD_PROJECT}`
+   :code:`gcloud tasks queues update data-import --max-dispatches-per-second=1 --project ${WVV_GCLOUD_PROJECT}`
 #. Deploy the application to the App Engine:
    :code:`gcloud app deploy dbsync/app.yaml --project ${WVV_GCLOUD_PROJECT}`
 #. Deploy the cron tab to the App Engine:
    :code:`gcloud app deploy dbsync/cron.yaml --project ${WVV_GCLOUD_PROJECT}`
 #. Debugging: have a lock at the logs
    :code:`gcloud app logs tail -s default --project ${WVV_GCLOUD_PROJECT}`
+
+Note: the initial maximum runtime length of a task in a Cloud Task is 10 minutes.
+This can be increased upto 24 hours.
+https://cloud.google.com/tasks/docs/dual-overview
 
 
 Deploy in Project's Google Cloud

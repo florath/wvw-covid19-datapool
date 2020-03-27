@@ -9,13 +9,13 @@ import git
 import os
 import shutil
 import hashlib
+import tempfile
 from google.cloud import firestore
-from data_import.lib.utils import import_data_collection, get_available_data_ids
+from data_import.lib.utils import import_data_collection, get_available_data_ids, ls
 
 
 GIT_REPO_URL = "https://github.com/CSSEGISandData/COVID-19.git"
-GIT_REPO_LOCAL = "/tmp/jh-covid-19"
-DATA_DIR = GIT_REPO_LOCAL + "/csse_covid_19_data/csse_covid_19_daily_reports"
+DATA_DIR = "csse_covid_19_data/csse_covid_19_daily_reports"
 COUNTRY2ISO_MAPPING = "data_import/jh-country2iso.csv"
 
 
@@ -78,7 +78,7 @@ def handle_one_data_line_2020_02(line):
             'infected': convert2int(line[3]),
             'deaths': convert2int(line[4]),
             'recovered': convert2int(line[5]),
-            'source': 'Johns-Hopkins-github',
+            'source': 'johns_hopkins_github',
             'original': {
                 'location': location
             },
@@ -122,7 +122,7 @@ def handle_one_data_line_2020_03(line):
             'confirmed': convert2int(line[7]),
             'deaths': convert2int(line[8]),
             'recovered': convert2int(line[9]),
-            'source': 'Johns-Hopkins-github',
+            'source': 'johns_hopkins_github',
             'original': {
                 'location': [line[3], line[2], line[1], line[0]]
             },
@@ -172,38 +172,59 @@ def handle_one_data_file(tab_ref, data_available_ids, fname):
         import_data_collection(content, hod_cb, tab_ref, data_available_ids)
 
 
-def update_git():
+def update_git(tmp_dir):
     '''Update the git repo
 
     This is a very first basic implementation which clones the repo every time.
     Later on this can be changed in (just) updating a possible existing one.
     '''
-    shutil.rmtree(GIT_REPO_LOCAL, ignore_errors=True)
-    repo = git.Repo.clone_from(GIT_REPO_URL, GIT_REPO_LOCAL, depth=1)
+    print("update_git called [%s]" % tmp_dir)
+    repo = git.Repo.clone_from(GIT_REPO_URL, tmp_dir, depth=1)
+    print("update_git finished [%s]" % tmp_dir)
 
 
-def update_data():
+def update_data(tmp_dir):
     '''Reads in the data from the git repo, converts it and pushes it into the DB'''
+    print("update_data called [%s]" % tmp_dir)
+    print("update_data creating connection to Firestore")
     db = firestore.Client()
     tab_ref = db.collection(u"cases")\
                 .document("sources")\
                 .collection("johns_hopkins_github")
 
+    print("update_data creating retrieve existing ids")
     data_available_ids = get_available_data_ids(tab_ref)
     
-    for fname in os.listdir(DATA_DIR):
+    print("update_data handle files")
+    for fname in os.listdir(os.path.join(tmp_dir, DATA_DIR)):
         if fname.endswith(".csv"):
-            handle_one_data_file(tab_ref, data_available_ids, os.path.join(DATA_DIR, fname))
+            print("update_data handling file [%s]" % fname)
+            handle_one_data_file(tab_ref, data_available_ids,
+                                 os.path.join(tmp_dir, DATA_DIR, fname))
+    print("update_data finished [%s]" % tmp_dir)
 
-    
+
 def import_data_johns_hopkins_github():
-    print("Called import_data_johns_hopkins_github")
-    update_git()
-    update_data()
-    print("Finished import_data_johns_hopkins_github")
+    print("import_data_johns_hopkins_github called")
+    ls("/tmp")
+    try:
+        tmp_dir = tempfile.mkdtemp(prefix="johns-hopkins-github", dir="/tmp")
+        print("import_data_johns_hopkins_github start [%s]" % tmp_dir)
+        update_git(tmp_dir)
+        update_data(tmp_dir)
+        print("import_data_johns_hopkins_github finished [%s]" % tmp_dir)
+    except Exception as ex:
+        print("import_data_johns_hopkins_github Exception [%s]" % ex)
+    finally:
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+
+    # Check for remaining files in /tmp
+    print("import_data_johns_hopkins_github cleanup check started")
+    ls("/tmp")
+    print("import_data_johns_hopkins_github cleanup check finished")
 
 
 if __name__ == '__main__':
     '''For (local) testing: only update the data'''
-    update_data()
-    
+    update_data("/tmp/jh-covid-19")
+
