@@ -73,6 +73,50 @@ German government which took place from 2020-03-20 until 2020-03-22.
    :alt: "WirVsVirus Hackathon Logo"
    :width: 250
 
+Background
+==========
+
+Lots of maps, overviews and numbers that are currently published based
+on the data provided by the Johns-Hopkins_ CSSE. For example:
+Tagesschau_ or `Berliner Morgenpost`_ [4]. This data is a Hodgepodge
+of data from other sources that are 'easy' in one pot to be thrown.
+
+.. _Johns-Hopkins: https://github.com/CSSEGISandData/COVID-19
+.. _Tagesschau: https://www.tagesschau.de/ausland/coronavirus-karte-101.html
+.. _Berliner Morgenpost: https://interaktiv.morgenpost.de/corona-virus-karte-infektionen-deutschland-weltweit/
+
+An example: 'infected' in the record means that a person who is
+infected was tested. Not present in this record are however numbers of
+how many tests were run. An 'infected' on 10 tests is different from
+an 'infected' on 1000 tests.  Making a meaningfull statement based
+on these numbers e.g. the effectiveness of measures (curfew, border
+closure, ...) is modern coffee grounds reading.
+
+The goal of this project is to search for existing data sources,
+convert them and make them available to all who are interested in -
+especially as an alternative and extension of the benefits
+Johns-Hopkins data. Not every person who wants to research, compile
+statistics or calculate a new model would need to take care of the
+many and complex details, but can get started right away.
+
+Because: every institution, authority, state, health department offers
+the data in its own form:nicely presented - but for further processing
+and analysis completely unsuitable.  Add to that the license terms
+which are, at best, are unknown. All Germans Health departments of the
+federal states have Copyright on the case numbers, which makes it
+impossible to use, process or pass them on.
+
+There are also some records of hospitalization from COVID-19 infected
+the French government. Based on this data, the Markov transition
+probabilities in the last paper_ from the RKI can be checked (page 4,
+Fig 1). If it would be possible to make more precise and substantiated
+statements here about estimates of the dark figure ('infected but not
+tested').  (Example: Would the model published by the RKI, which is
+not country-specific, applied in Italy, you would currently get there
+to over 700,000 infected.)
+
+.. _paper: https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Modellierung_Deutschland.pdf?__blob=publicationFile
+
 
 Features
 ========
