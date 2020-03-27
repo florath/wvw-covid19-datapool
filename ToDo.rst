@@ -53,6 +53,10 @@ Cleanup and Basics
   + Unit tests
   + Integration tests
 
+* Fix problems with lastest Changes in Johns-Hopkins data set
+  (Esp. location mapping)
+
+* Add method to report incomplete imports.
 
 
 
