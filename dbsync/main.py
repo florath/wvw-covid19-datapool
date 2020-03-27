@@ -21,9 +21,11 @@ QUEUE = "data-import"
 
 @app.route('/v1/get_all/cases/source/<source>')
 def lv1_get_all_cases_source(source):
+    environment = request.args.get("env", default="prod", type=str)
+    rdata, rcode=json.dumps(v1_get_all_cases_source(environment, source))
     response = app.response_class(
-        response=json.dumps(v1_get_all_cases_source(source)),
-        status=200,
+        status=rcode,
+        response=rdata,
         mimetype='application/json'
     )
     return response
@@ -37,6 +39,22 @@ def import_data_trigger(source):
     '''This triggers the import via a Cloud Task'''
     print("import_data_trigger called for [%s]" % source)
 
+    environment = request.args.get("env", default="prod", type=str)
+    ignore_errors = request.args.get("ignore-errors", default=True, type=bool)
+    print("import_data_trigger environment [%s] ignore-errors [%s]"
+          % (environment, ignore_errors))
+    
+    if environment not in ["prod", "test"]:
+        print("Wrong paramter for environment [%s]" % environment)
+        return "Wrong input parameter", 422
+    
+    # Data passed to the real funtion
+    jdata = {
+        'source': source,
+        'environment': environment,
+        'ignore-errors': ignore_errors
+    }
+
     try:
         client = tasks_v2.CloudTasksClient()
         parent = client.queue_path(PROJECT, LOCATION, QUEUE)
@@ -46,7 +64,7 @@ def import_data_trigger(source):
             'app_engine_http_request': {  # Specify the type of request.
                 'http_method': 'POST',
                 'relative_uri': '/v1/task/import_data',
-                'body': source.encode()
+                'body': json.dumps(jdata).encode()
             }
         }
 
@@ -59,22 +77,24 @@ def import_data_trigger(source):
     return "import_data_trigger ok", 200
 
 
-
-
 @app.route('/v1/task/import_data', methods=['POST',])
 def import_data():
     '''The real import function'''
     try:
-        source = request.get_data(as_text=True)
-        print("import_data called for [%s]" % source)
+        jdata = json.loads(request.get_data(as_text=True))
+        print("import_data called with parameters [%s]" % jdata)
 
+        source = jdata['source']
         # ToDo: this should be a module and loaded during runtime
         if source == 'johns_hopkins_github':
-            import_data_johns_hopkins_github()
+            import_data_johns_hopkins_github(
+                jdata['environment'], jdata['ignore-errors'])
         if source == 'ecdc_xlsx':
-            import_data_ecdc_xlsx()
+            import_data_ecdc_xlsx(
+                jdata['environment'], jdata['ignore-errors'])
         if source == 'gouv_fr':
-            import_data_gouv_fr()
+            import_data_gouv_fr(
+                jdata['environment'], jdata['ignore-errors'])
         else:
             print("*** ERROR: unknown source [%s]" % source)
     except Exception as ex:

@@ -58,7 +58,8 @@ Cleanup and Basics
 
 * Add method to report incomplete imports.
 
-
+* Delta update in DB:
+  Remove possible old / unused / changed datasets
 
 
 Possible Data Sources
