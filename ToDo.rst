@@ -1,3 +1,62 @@
+Cleanup and Basics
+++++++++++++++++++
+
+* Add another level in DB for different use cases (e.g. production,
+  pre-production, test, development, ...)
+
+* Unify location information.
+  Suggestion:
+
+  location: {
+    iso-3166-1-alpha2: CC
+    iso-3166-2: REGC
+
+    wgs84: {
+      longitude: -4.5555
+      latitude: 7.877
+      }
+    }
+
+* All information in the original dataset is copied
+  (with appropriate documention) to the 'original' key.
+
+* Cleanup Readme
+  + Generel: Remove all limitations - we are productive!
+  + For each source: create an own document and reference from the Readme.
+  
+* To fulfill the license, there is the need to add some
+  meta-information, like
+
+  {
+     source: URL
+     download_ts: 193833939
+     license: {
+       name: GPL3
+       URL: theURLToTheLicense
+     }
+     description: "Some words"
+  }
+
+  This information *must* be included in *every* data-query!
+
+* Cleanup Source Code
+  There are *many* duplicates and similarities
+
+* Re-structure the source code:
+  + Use modules (run time)
+  + Split into subdirectories
+
+* Add CI/CD
+  + python tox
+  + python pylint
+  + python pep8
+  + Unit tests
+  + Integration tests
+
+
+
+
+
 Possible Data Sources
 +++++++++++++++++++++
 
