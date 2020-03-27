@@ -1,9 +1,6 @@
 Cleanup and Basics
 ++++++++++++++++++
 
-* Add another level in DB for different use cases (e.g. production,
-  pre-production, test, development, ...)
-
 * Unify location information.
   Suggestion:
 
@@ -58,7 +55,8 @@ Cleanup and Basics
 
 * Add method to report incomplete imports.
 
-
+* Delta update in DB:
+  Remove possible old / unused / changed datasets
 
 
 Possible Data Sources

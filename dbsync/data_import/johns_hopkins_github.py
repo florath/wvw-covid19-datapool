@@ -183,16 +183,18 @@ def update_git(tmp_dir):
     print("update_git finished [%s]" % tmp_dir)
 
 
-def update_data(tmp_dir):
+def update_data(tmp_dir, environment):
     '''Reads in the data from the git repo, converts it and pushes it into the DB'''
-    print("update_data called [%s]" % tmp_dir)
+    print("update_data called [%s] [%s]" % (tmp_dir, environment))
     print("update_data creating connection to Firestore")
     db = firestore.Client()
-    tab_ref = db.collection(u"cases")\
+    tab_ref = db.collection("covid19datapool")\
+                .document(environment) \
+                .collection("cases")\
                 .document("sources")\
                 .collection("johns_hopkins_github")
 
-    print("update_data creating retrieve existing ids")
+    print("update_data retrieve existing ids")
     data_available_ids = get_available_data_ids(tab_ref)
     
     print("update_data handle files")
@@ -204,14 +206,17 @@ def update_data(tmp_dir):
     print("update_data finished [%s]" % tmp_dir)
 
 
-def import_data_johns_hopkins_github():
-    print("import_data_johns_hopkins_github called")
+def import_data_johns_hopkins_github(environment, ignore_errors):
+    print("import_data_johns_hopkins_github called [%s] [%s]" %
+          (environment, ignore_errors))
+    print("import_data_johns_hopkins_github start pre-process checks")
     ls("/tmp")
+    print("import_data_johns_hopkins_github finished pre-process checks")
     try:
         tmp_dir = tempfile.mkdtemp(prefix="johns-hopkins-github", dir="/tmp")
         print("import_data_johns_hopkins_github start [%s]" % tmp_dir)
         update_git(tmp_dir)
-        update_data(tmp_dir)
+        update_data(tmp_dir, environment)
         print("import_data_johns_hopkins_github finished [%s]" % tmp_dir)
     except Exception as ex:
         print("import_data_johns_hopkins_github Exception [%s]" % ex)
