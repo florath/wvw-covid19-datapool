@@ -1,19 +1,13 @@
 Datapool of COVID-19 cases
 ++++++++++++++++++++++++++
 
-**THE PROJECT IS IN A PROVE OF CONCEPT PHASE - EVERYTHING MIGHT
-CHANGE ON SHORT NOTICE**
-
-Nevertheless it is possible to already retreive complete data sets.
-
-**BECAUSE JOHNS HOPKINS CHANGED THE DATA FORMAT ON 2020-03-24, IT WILL
-TAKE A LITTLE BIT OF TIME TO ADAPT THE TOOLS TO THE NEW DATA SET.**
+**The project is in beta phase. Interface changes might occur.**
 
 PLEASE HELP!
 ============
 
 Currently many important decisions are made based on incomplete or
-wrong numbers.
+wrong numbers. Please help to improve the situation!
 
 * Find credible data sources
 * Check if sources can be used (legal, license, sensible data, ...)
@@ -25,7 +19,8 @@ Warning & Term of Use
 =====================
 
 Before using this database read the documentation of the data which
-you want to use!  A lot data **is** incorrect or not what you expect.
+you want to use!  A lot data of the sources might be incorrect or not
+what you expect.  Please double check!
 
 E.g. 'infected' mostly does not mean the number of really infected
 people but the number of **known** infected people - which has a high
@@ -38,8 +33,8 @@ reported officially.
 
 And a third example: The German RKI data contains only the cases which
 were transmitted electronically.  Data which is transmitted by snail
-mail or by fax is currently not included because this would exceed the
-capacity of the RKI.  Therefore complete regions might have much
+mail or by fax is currently not included (because this would exceed
+the capacity of the RKI?).  Therefore complete regions might have much
 higher numbers.
 
 
@@ -54,10 +49,14 @@ sets are currently implemented:
 
 .. code:: bash
 
-   curl https://wirvsvirushackathon-271718.appspot.com/v1/get_all/cases/source/ecdc_xlsx
+   curl https://wirvsvirushackathon-271718.appspot.com/v1/get_all/cases/source/ecdc_xlsx >data.json
 
-   curl https://wirvsvirushackathon-271718.appspot.com/v1/get_all/cases/source/johns_hopkins_github
+   curl https://wirvsvirushackathon-271718.appspot.com/v1/get_all/cases/source/johns_hopkins_github >data.json
 
+A JSON list with two elements is returned: the first element is the
+license of the data,the second element is the data set itself, which
+is in turn a list of dicrionaries which key value pairs.
+   
 
 Introduction
 ============
@@ -80,7 +79,8 @@ Features
 
 * Automatically updated every some hours from the given sources
 * Unified and easy to use JSON formatted data
-* Can be used locally or in a cloud.
+* Data can directly be retrieved using HTTPS from a database
+  (sort and filter actions will shortly follow)
 
 
 Database
@@ -101,8 +101,9 @@ fields are optional:
 * indected: integer
 * recovered: integer
 * source: string; the source of the data
-* adm: list; administration zones. adm[0] is always the country
-  in two letter ISO code
+* location: dict;
+  - iso-3166-1-alpha2: 2 chars
+  - wgs84: { longitute: latitude: }: coordinates
 * original: dictionary; random data of the original data set
   which is (currently) not mapped
 
@@ -110,48 +111,28 @@ Example:
 
 .. code-block:: JSON
 
-  {
-    "original": {
-      "location": [
-        "Estonia"
-      ]
-    },
-    "infected": 225,
-    "recovered": 1,
-    "source": "Johns-Hopkins-github",
-    "deaths": 0,
-    "timestamp": 1584437583,
-    "adm": [
-      "EE"
-    ]
-  }
-
-
-Layout
-------
-
-This is only for those who are interesed in: for a 'normal' user there
-is no need for this.
-
-.. code::
-
-   covid19datapool (collection)
-   |- test (document) [Environment]
-      |- cases (collection)
-      |  |- sources (document)
-      |     |- source1 (collection)
-      |     |  |- data (documents)
-      |     |- source2 (collection)
-      |     |  |- data (documents)
-      prod (document)
-      |- cases (collection)
-         |- sources (document)
-         --- same as above ---
-
-The initial idea to have a worldwide unified database can currently
-not be implemented.  There are too many uncertainties and unknowns
-which data set possible includes another.  Therefor for the time
-being, the data is only unified and converted to JSON.
+    {
+      "recovered": 0,
+      "location": {
+        "wgs84": {
+          "longitude": -76.93859681,
+          "latitude": 36.6831435
+        },
+        "iso-3166-1-alpha2": "US"
+      },
+      "deaths": 0,
+      "source": "johns_hopkins_github",
+      "confirmed": 0,
+      "timestamp": 1585179199,
+      "original": {
+        "location": [
+          "US",
+          "Virginia",
+          "Franklin City",
+          "51620"
+        ]
+      }
+    }
 
 
 REST Interface
@@ -226,11 +207,7 @@ Data Sources
 ecdc: European Centre for Disease Prevention and Control
 --------------------------------------------------------
 
-Data path:
-
-.. code::
-
-   cases/sources/ecdc-xlsx
+ID: :code:`ecdc-xlsx`
 
 https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
 
@@ -251,14 +228,7 @@ statistical analysis or reporting purposes.*
 Johns Hopkins GitHub
 --------------------
 
-**Due to a change in the data set, the latest data from today
-(2020-03-24) is not yet imported.**
-
-Data path:
-
-.. code::
-
-   cases/sources/johns-hopkins-github
+ID: :code:`johns_hopkins_github`
 
 https://github.com/CSSEGISandData/COVID-19
 
@@ -277,6 +247,8 @@ mapping is not yet available.
 
 data.gouv.fr
 ------------
+
+**THIS DATA SET IS CURRENTLY NOT AVAILABLE**
 
 **THE DATA FROM THE ORIGINAL SOURCE IS CURRENTLY ONLY
 PARTIAL AVAILABLE AND IS CURRENTLY NOT AUTOMATICALLY UPDATED.**
@@ -335,7 +307,6 @@ The first step looks very similar to the current implementation here:
 tidy up the data, mapping regions / countries to ISO codes, ...
 
 
-
 Thanks
 ======
 
@@ -346,6 +317,34 @@ Thanks to Google for supporting this project by providing cloud
 resources on `Google Cloud`_ for database and WEB services.
 
 .. _Google Cloud: https://cloud.google.com/
+
+
+Database Layout
+===============
+
+This is only for those who are interesed in: for a 'normal' user there
+is no need for this.
+
+.. code::
+
+   covid19datapool (collection)
+   |- test (document) [Environment]
+      |- source1 (collection) [Example: johns_hopkins_github]
+      |  |- metadata (document) [Contains: license, last download, ...]
+      |  |- data (document)
+      |     |- collection (collection)
+      |     |  |- data entry 1 (documents)
+      |     |  |- data entry 2 (documents)
+      |- source2 (collection) [Example: ecdc_xlsx]
+      |  |- metadata (document) [Contains: license, last download, ...]
+      |  | --- same as above ---
+      prod (document) [Environment]
+      |   --- same as above ---
+
+The initial idea to have a worldwide unified database can currently
+not be implemented.  There are too many uncertainties and unknowns
+which data set possible includes another.  Therefor for the time
+being, the data is only unified and converted to JSON.
 
 
 ..  LocalWords:  WirVsVirus Hackathon

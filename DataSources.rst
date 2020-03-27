@@ -100,7 +100,7 @@ To be checked
 * https://docs.google.com/spreadsheets/d/1ta2k0JLH-2fbTrpSptxa5wTo5Al3aLQ-b5H7vBVgd0M/edit#gid=0
 * https://devpost.com/software/038_daten_infektionszahlenschatzen
 * https://devpost.com/software/1_038_a_daten_datawarehousing
-
+* https://covid-19-apis.postman.com/
 
 Data Visualization
 ==================

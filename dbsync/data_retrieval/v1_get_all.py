@@ -1,6 +1,7 @@
 '''
 Methods to get complete data sets.
 '''
+
 from google.cloud import firestore
 
 
@@ -21,14 +22,16 @@ def v1_get_all_cases_source(environment, source):
         return '["Invalid source"]', 422
     
     db = firestore.Client()
-    tab_ref = db.collection("covid19datapool")\
-                .document(environment)\
-                .collection("cases")\
-                .document("sources")\
-                .collection(source)
+
+    meta_ref = db.document(
+        "covid19datapool/%s/%s/metadata" % (environment, source))
+    metadata = meta_ref.get().to_dict()
+    
+    tab_ref = db.collection(
+        "covid19datapool/%s/%s/data/collection" % (environment, source))
 
     result = []
     for doc in tab_ref.stream():
         result.append(doc.to_dict())
     print("Finished v1_get_all_cases_source; result size [%d]" % len(result))
-    return result, 200
+    return [metadata, result], 200

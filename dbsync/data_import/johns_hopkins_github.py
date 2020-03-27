@@ -11,7 +11,8 @@ import shutil
 import hashlib
 import tempfile
 from google.cloud import firestore
-from data_import.lib.utils import import_data_collection, get_available_data_ids, ls
+from data_import.lib.utils import import_data_collection, \
+    get_available_data_ids, ls, update_metadata
 
 
 GIT_REPO_URL = "https://github.com/CSSEGISandData/COVID-19.git"
@@ -34,7 +35,8 @@ def convert2int(s):
 
 
 def convert2float(s):
-    '''Converts the given string to a Floating-Point Number. If the string is empty, return 0.
+    '''Converts the given string to a Floating-Point Number.
+    If the string is empty, return 0.
     This is necessary for longitude and latitude.'''
     if s == '':
         return 0.0
@@ -57,10 +59,6 @@ def handle_one_data_line_2020_02(line):
     Province/State,Country/Region,Last Update,Confirmed,Deaths,Recovered,\
        Latitude,Longitude
        6        7
-
-    Latitude and Longitude are ignored (as they change from time to time
-    even for the same place).  IHMO there are better ways to map the adm
-    fields to geographical data.
     '''
     try:
         ts = convert_ts(line[2])
@@ -82,11 +80,21 @@ def handle_one_data_line_2020_02(line):
             'original': {
                 'location': location
             },
-            'adm': adm,
+            'location': {
+                # The 'strip()' is needed because of incorrect input data, e.g.
+                # , Azerbaijan,2020-02-28T15:03:26,1,0,0
+                'iso-3166-1-alpha2': country2iso[line[1].strip()],
+            }
         }
 
-        sha_str = str(ts) + line[1] + line[3] + line[4] + line[5]
+        if len(line) > 6:
+            # Then the longitute and latitude are given
+            nd['wgs84'] = {
+                'longitude': convert2float(line[6]),
+                'latitude': convert2float(line[7])
+            }
 
+        sha_str = str(ts) + "".join(line[1:5])
         return nd, hashlib.sha256(sha_str.encode("utf-8")).hexdigest()
 
     except ValueError as ve:
@@ -110,15 +118,8 @@ def handle_one_data_line_2020_03(line):
 
     try:
         ts = convert_ts(line[4])
-
-        # The 'strip()' is needed because of incorrect input data, e.g.
-        # , Azerbaijan,2020-02-28T15:03:26,1,0,0
-        adm = [country2iso[line[3].strip()], line[2], line[1], convert2int(line[0])]
-
         nd = {
             'timestamp': ts,
-            'latitude': convert2float(line[5]),
-            'longitude': convert2float(line[6]),
             'confirmed': convert2int(line[7]),
             'deaths': convert2int(line[8]),
             'recovered': convert2int(line[9]),
@@ -126,11 +127,19 @@ def handle_one_data_line_2020_03(line):
             'original': {
                 'location': [line[3], line[2], line[1], line[0]]
             },
-            'adm': adm,
+            'location': {
+                # The 'strip()' is needed because of incorrect input data, e.g.
+                # , Azerbaijan,2020-02-28T15:03:26,1,0,0
+                'iso-3166-1-alpha2': country2iso[line[3].strip()],
+                # ToDo: fill in missing iso-3166-2 region code
+                'wgs84': {
+                    'longitude': convert2float(line[6]),
+                    'latitude': convert2float(line[5])
+                }
+            }
         }
 
-        sha_str = str(ts) + line[1] + line[3] + line[4] + line[5] + line[6] + line[7] + line[8] + line[9]
-
+        sha_str = str(ts) + "".join(line[1:9])
         return nd, hashlib.sha256(sha_str.encode("utf-8")).hexdigest()
 
     except ValueError as ve:
@@ -156,7 +165,7 @@ def get_callback_based_on_header(header):
                   'Last_Update', 'Lat', 'Long_', 'Confirmed', 'Deaths',
                   'Recovered', 'Active', 'Combined_Key']:
         return handle_one_data_line_2020_03
-    
+
     print("Unknown header in datafile [%s]" % header)
     return None
 
@@ -167,7 +176,8 @@ def handle_one_data_file(tab_ref, data_available_ids, fname):
         header = next(content)
         hod_cb = get_callback_based_on_header(header)
         if hod_cb == None:
-            print("No callback available for the data file [%s] - skipping" % fname)
+            print("No callback available for the data file [%s] - skipping"
+                  % fname)
             return
         import_data_collection(content, hod_cb, tab_ref, data_available_ids)
 
@@ -184,25 +194,25 @@ def update_git(tmp_dir):
 
 
 def update_data(tmp_dir, environment):
-    '''Reads in the data from the git repo, converts it and pushes it into the DB'''
+    '''Reads in the data from the git repo, converts it and
+    pushes it into the DB'''
     print("update_data called [%s] [%s]" % (tmp_dir, environment))
     print("update_data creating connection to Firestore")
     db = firestore.Client()
-    tab_ref = db.collection("covid19datapool")\
-                .document(environment) \
-                .collection("cases")\
-                .document("sources")\
-                .collection("johns_hopkins_github")
+    tab_ref = db.collection(
+        "covid19datapool/%s/johns_hopkins_github/data/collection" % environment)
 
     print("update_data retrieve existing ids")
     data_available_ids = get_available_data_ids(tab_ref)
-    
+
     print("update_data handle files")
     for fname in os.listdir(os.path.join(tmp_dir, DATA_DIR)):
         if fname.endswith(".csv"):
             print("update_data handling file [%s]" % fname)
             handle_one_data_file(tab_ref, data_available_ids,
                                  os.path.join(tmp_dir, DATA_DIR, fname))
+    update_metadata(db, "data_import/johns_hopkins_github/metadata.json",
+                    environment, "johns_hopkins_github")
     print("update_data finished [%s]" % tmp_dir)
 
 
@@ -231,5 +241,4 @@ def import_data_johns_hopkins_github(environment, ignore_errors):
 
 if __name__ == '__main__':
     '''For (local) testing: only update the data'''
-    update_data("/tmp/jh-covid-19")
-
+    update_data("/tmp/jh-covid-19", "prod")

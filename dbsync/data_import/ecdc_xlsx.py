@@ -11,7 +11,8 @@ import datetime
 import hashlib
 from google.cloud import firestore
 
-from data_import.lib.utils import import_data_collection, get_available_data_ids
+from data_import.lib.utils import import_data_collection, \
+    get_available_data_ids, update_metadata
 
 from openpyxl import load_workbook
 
@@ -70,17 +71,16 @@ def handle_one_data_line(line):
         'timestamp': ts,
         'infected': int(line[4].value),
         'deaths': int(line[5].value),
-        'source': 'ecdc-xlsx',
+        'source': 'ecdc_xlsx',
         'original': {
             'location': line[6].value
         },
-        'adm': [line[7].value, ]
+        'location': {
+            'iso-3166-1-alpha2': line[7].value
+        }
     }
 
-    sha_str = str(ts) + str(line[1].value) + str(line[2].value) \
-        + str(line[3].value) + str(line[4].value) + str(line[5].value) \
-        + str(line[6].value) + str(line[7].value)
-
+    sha_str = str(ts) + "".join(map(lambda x: str(x.value), line[1:]))
     return nd, hashlib.sha256(sha_str.encode("utf-8")).hexdigest()
 
 
@@ -91,11 +91,8 @@ def update_data(environment):
     sheet_ranges = wb['COVID-19-geographic-disbtributi']
 
     db = firestore.Client()
-    tab_ref = db.collection("covid19datapool")\
-                .document(environment) \
-                .collection(u"cases")\
-                .document("sources")\
-                .collection("ecdc_xlsx")
+    tab_ref = db.collection(
+        "covid19datapool/%s/ecdc_xlsx/data/collection" % environment)
 
     data_available_ids = get_available_data_ids(tab_ref)
     # Skip header
@@ -104,6 +101,8 @@ def update_data(environment):
     import_data_collection(iter_rows,
                            handle_one_data_line, tab_ref,
                            data_available_ids)
+    update_metadata(db, "data_import/ecdc_xlsx/metadata.json",
+                    environment, "ecdc_xlsx")
 
 
 def import_data_ecdc_xlsx(environment, ignore_errors):
@@ -116,4 +115,4 @@ def import_data_ecdc_xlsx(environment, ignore_errors):
 
 if __name__ == '__main__':
     '''For (local) testing: only update the data'''
-    update_data()
+    update_data("test")
