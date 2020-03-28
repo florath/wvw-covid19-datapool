@@ -6,7 +6,7 @@ Cleanup and Basics
 
   location: {
     iso-3166-1-alpha2: CC
-    iso-3166-2: REGC
+    iso-3166-2: [REGC1, REGC2, ..]
 
     wgs84: {
       longitude: -4.5555

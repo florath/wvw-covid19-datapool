@@ -81,7 +81,7 @@ def handle_one_data_line(line):
     }
 
     sha_str = str(ts) + "".join(map(lambda x: str(x.value), line[1:]))
-    return nd, hashlib.sha256(sha_str.encode("utf-8")).hexdigest()
+    return [(nd, sha_str), ]
 
 
 def update_data(environment):
@@ -110,7 +110,7 @@ def import_data_ecdc_xlsx(environment, ignore_errors):
           (environment, ignore_errors))
     if download_xlsx():
         update_data(environment)
-    print("Finished import_data_ecdc_xlsx")
+    print("import_data_ecdc_xlsx finished")
 
 
 if __name__ == '__main__':
