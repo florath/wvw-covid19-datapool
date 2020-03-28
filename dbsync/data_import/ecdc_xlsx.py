@@ -69,15 +69,13 @@ def handle_one_data_line(line):
 
     nd = {
         'timestamp': ts,
-        'infected': int(line[4].value),
+        'confirmed': int(line[4].value),
         'deaths': int(line[5].value),
         'source': 'ecdc_xlsx',
         'original': {
             'location': line[6].value
         },
-        'location': {
-            'iso-3166-1-alpha2': line[7].value
-        }
+        'iso-3166-1': line[7].value
     }
 
     sha_str = str(ts) + "".join(map(lambda x: str(x.value), line[1:]))

@@ -67,10 +67,6 @@ def handle_one_data_line_2020_02(line):
         if line[0] != '':
             location.append(line[0])
 
-        # The 'strip()' is needed because of incorrect input data, e.g.
-        # , Azerbaijan,2020-02-28T15:03:26,1,0,0
-        adm = [ country2iso[line[1].strip()], ]
-
         nd = {
             'timestamp': ts,
             'infected': convert2int(line[3]),
@@ -80,22 +76,18 @@ def handle_one_data_line_2020_02(line):
             'original': {
                 'location': location
             },
-            'location': {
-                # The 'strip()' is needed because of incorrect input data, e.g.
-                # , Azerbaijan,2020-02-28T15:03:26,1,0,0
-                'iso-3166-1-alpha2': country2iso[line[1].strip()],
-            }
+            # The 'strip()' is needed because of incorrect input data, e.g.
+            # , Azerbaijan,2020-02-28T15:03:26,1,0,0
+            'iso-3166-1': country2iso[line[1].strip()],
         }
 
         if len(line) > 6:
             # Then the longitute and latitude are given
-            nd['wgs84'] = {
-                'longitude': convert2float(line[6]),
-                'latitude': convert2float(line[7])
-            }
+            nd['longitude'] = convert2float(line[6])
+            ns['latitude'] = convert2float(line[7])
 
-        sha_str = str(ts) + "".join(line[1:5])
-        return nd, hashlib.sha256(sha_str.encode("utf-8")).hexdigest()
+        sha_str = "".join(line)
+        return nd, sha_str
 
     except ValueError as ve:
         # If there is a problem e.g. converting the ts
@@ -127,20 +119,16 @@ def handle_one_data_line_2020_03(line):
             'original': {
                 'location': [line[3], line[2], line[1], line[0]]
             },
-            'location': {
-                # The 'strip()' is needed because of incorrect input data, e.g.
-                # , Azerbaijan,2020-02-28T15:03:26,1,0,0
-                'iso-3166-1-alpha2': country2iso[line[3].strip()],
-                # ToDo: fill in missing iso-3166-2 region code
-                'wgs84': {
-                    'longitude': convert2float(line[6]),
-                    'latitude': convert2float(line[5])
-                }
-            }
+            # The 'strip()' is needed because of incorrect input data, e.g.
+            # , Azerbaijan,2020-02-28T15:03:26,1,0,0
+            'iso-3166-1': country2iso[line[3].strip()],
+            # ToDo: fill in missing iso-3166-2 region code
+            'longitude': convert2float(line[6]),
+            'latitude': convert2float(line[5])
         }
 
-        sha_str = str(ts) + "".join(line[1:9])
-        return nd, hashlib.sha256(sha_str.encode("utf-8")).hexdigest()
+        sha_str = "".join(line)
+        return nd, sha_str
 
     except ValueError as ve:
         # If there is a problem e.g. converting the ts

@@ -1,6 +1,8 @@
 Cleanup and Basics
 ++++++++++++++++++
 
+* Add number of data rows into metadata
+
 * Unify location information.
   Suggestion:
 

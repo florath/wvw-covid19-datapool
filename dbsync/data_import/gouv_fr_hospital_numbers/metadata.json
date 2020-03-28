@@ -7,6 +7,7 @@
 	"url": "https://www.etalab.gouv.fr/licence-ouverte-open-licence"
     },
     "data-fields": {
+	"timestamp": "in seconds since EPOCH; time / date given in the data set",
 	"age-lower": "(optional) computed from the age group field. Only set if age group is given",
 	"age-upper": "(optional) computed from the age group field. Only set if age group is given",
 	"iso-3166-1": "always 'FR' for this data set",

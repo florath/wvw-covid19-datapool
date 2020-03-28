@@ -298,7 +298,6 @@ def import_data_gouv_fr(environment, ignore_errors):
     print("import_data_gouv_fr called [%s] [%s]" %
           (environment, ignore_errors))
     datalist = download_master_html()
-    print(datalist)
     for data in datalist:
         update_data(data, environment)
     print("import_data_gouv_fr finished")
@@ -306,4 +305,4 @@ def import_data_gouv_fr(environment, ignore_errors):
 
 if __name__ == '__main__':
     '''For (local) testing'''
-    import_data_gouv_fr("test", True)
+    import_data_gouv_fr("prod", True)
