@@ -9,7 +9,8 @@ import json
 import hashlib
 import re
 from html.parser import HTMLParser
-from data_import.lib.utils import import_data_collection, get_available_data_ids
+from data_import.lib.utils import import_data_collection, \
+    get_available_data_ids, update_metadata
 from google.cloud import firestore
 import dateutil.parser
 
@@ -290,6 +291,11 @@ def update_data(datapool, environment):
         next(csv_file)
         import_data_collection(csv_file, data[2],
                                tab_ref, data_available_ids)
+
+    # For each table, insert the metadata
+    update_metadata(db, "data_import/gouv_fr_hospital_numbers/metadata.json",
+                    environment, "gouv_fr_covid19_emergency_room_visits")
+ 
     print("Finished updating data [%s] environment [%s]"
           % (data[0], environment))
 

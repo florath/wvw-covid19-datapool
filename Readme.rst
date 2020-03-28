@@ -2,7 +2,7 @@ Datapool of COVID-19 cases
 ++++++++++++++++++++++++++
 
 Datapool of COVID-19 data from different sources, refurbished, simple
-data structure (JSON), single interface (HTTPS).
+data structure (JSON), single and easy to use interface (REST via HTTPS).
 
 **The project is in beta phase. Interface changes might occur.**
 
@@ -202,22 +202,19 @@ Example:
 .. code-block:: JSON
 
     {
+      "infected": 8,
+      "iso-3166-1": "DE",
       "recovered": 0,
-      "location": {
-        "wgs84": {
-          "longitude": -76.93859681,
-          "latitude": 36.6831435
-        },
-        "iso-3166-1-alpha2": "US"
-      },
       "deaths": 0,
       "source": "johns_hopkins_github",
-      "confirmed": 0,
-      "timestamp": 1585179199,
+      "timestamp": 1580578380,
       "original": {
-        "location": [ "US", "Virginia", "Franklin City", "51620" ]
+        "location": [
+          "Germany"
+        ]
       }
     }
+
 
 
 REST Interface
