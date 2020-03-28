@@ -1,0 +1,8 @@
+{
+    "id": "ecdc_xlsx",
+    "name": "ecdc: European Centre for Disease Prevention and Control",
+    "url": "https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide",
+    "license": {
+	"text": "Users of ECDC public-use data files must comply with data use restrictions to ensure that the information will be used solely for statistical analysis or reporting purposes."
+    }
+}

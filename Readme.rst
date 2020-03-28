@@ -1,18 +1,10 @@
 Datapool of COVID-19 cases
 ++++++++++++++++++++++++++
 
+Datapool of COVID-19 data from different sources, refurbished, simple
+data structure (JSON), single interface (HTTPS).
+
 **The project is in beta phase. Interface changes might occur.**
-
-PLEASE HELP!
-============
-
-Currently many important decisions are made based on incomplete or
-wrong numbers. Please help to improve the situation!
-
-* Find credible data sources
-* Check if sources can be used (legal, license, sensible data, ...)
-* If you are a programmer: write an adapter to convert the data
-  into the locally used JSON format
 
 
 Warning & Term of Use
@@ -33,30 +25,79 @@ reported officially.
 
 And a third example: The German RKI data contains only the cases which
 were transmitted electronically.  Data which is transmitted by snail
-mail or by fax is currently not included (because this would exceed
-the capacity of the RKI?).  Therefore complete regions might have much
-higher numbers.
+mail or by fax is currently not included.  Therefore complete regions
+might have much higher numbers.
 
 
 For the Impatient
 =================
 
-This is not the recommended way - but the only currently
-implemented.  So stay in touch for possible changes.
-
-Get complete data sets. Return JSON list of arrays of dicts. Two data
-sets are currently implemented: 
+Get complete data sets:
 
 .. code:: bash
 
-   curl https://wirvsvirushackathon-271718.appspot.com/v1/get_all/cases/source/ecdc_xlsx >data.json
+   curl https://covid19datapool.appspot.com/v1/get_all/ecdc_xlsx
 
-   curl https://wirvsvirushackathon-271718.appspot.com/v1/get_all/cases/source/johns_hopkins_github >data.json
+   curl https://covid19datapool.appspot.com/v1/get_all/johns_hopkins_github
 
-A JSON list with two elements is returned: the first element is the
-license of the data,the second element is the data set itself, which
-is in turn a list of dicrionaries which key value pairs.
-   
+Data format:
+
+.. code-block:: JSON
+
+   data[0]: "meta information - name, license, last update, ..."
+   data[1]: "list of dicts"
+
+Example:
+
+.. code-block:: JSON
+
+   [
+     {
+       "name": "2019 Novel Coronavirus ...",
+       "license": {
+          "text": "This GitHub repo ..."
+      },
+      "id": "johns_hopkins_github",
+      "last_updated": 1585332042.294029,
+      "url": "https://github.com/CSSEGISandData/COVID-19"
+     },
+     [
+       {
+         "recovered": 0,
+         "location": {
+           "wgs84": {
+             "longitude": -86.04051873,
+             "latitude": 34.04567266
+           },
+           "iso-3166-1-alpha2": "US"
+         },
+         "deaths": 0,
+         "source": "johns_hopkins_github",
+         "confirmed": 0,
+         "timestamp": 1585093051,
+         "original": {
+           "location": [ "US", "Alabama", "Etowah", "01055" ]
+        }
+       },
+     ...
+
+
+This is not the recommended way accessing data - but the only currently
+implemented.  So stay in touch for possible changes and extensions:
+especially filters are planned.
+
+
+PLEASE HELP!
+============
+
+Currently many important decisions are made based on incomplete or
+wrong numbers. Please help to improve the situation!
+
+* Find credible data sources
+* Check if sources can be used (legal, license, sensible data, ...)
+* If you are a programmer: write an adapter to convert the data
+  into the locally used JSON format
+
 
 Introduction
 ============
@@ -146,8 +187,10 @@ fields are optional:
 * recovered: integer
 * source: string; the source of the data
 * location: dict;
+  
   - iso-3166-1-alpha2: 2 chars
   - wgs84: { longitute: latitude: }: coordinates
+
 * original: dictionary; random data of the original data set
   which is (currently) not mapped
 
@@ -169,12 +212,7 @@ Example:
       "confirmed": 0,
       "timestamp": 1585179199,
       "original": {
-        "location": [
-          "US",
-          "Virginia",
-          "Franklin City",
-          "51620"
-        ]
+        "location": [ "US", "Virginia", "Franklin City", "51620" ]
       }
     }
 
@@ -184,65 +222,6 @@ REST Interface
 
 TBD.
 
-Add: last updated timestamp
-
-
-Deployment
-==========
-
-
-Deploy in Google Cloud with Your Account
-----------------------------------------
-
-**This solution uses the Google Cloud App Engine.  The Google Cloud
-App Engine is not for free - you have to pay for it.  Especially the
-number of calls, used CPU, outbound network traffic, ... costs.**
-
-#. Create GCloud project; the name will be referenced as
-   WVV_GCLOUD_PROJECT
-#. Set Native mode for Firestore for this project to a region in the
-   near where the data will be used.
-#. Set a service account name. This must be between 6 and 30
-   characters long. Example:
-   :code:`export WVV_GCLOUD_SERVACC=$(echo servacc-${WVV_GCLOUD_PROJECT} | cut -c -30)`
-#. Create a service account
-   :code:`gcloud iam service-accounts create ${WVV_GCLOUD_SERVACC} --project ${WVV_GCLOUD_PROJECT}`
-#. Grant permissions
-   :code:`gcloud projects add-iam-policy-binding ${WVV_GCLOUD_PROJECT} --member "serviceAccount:${WVV_GCLOUD_SERVACC}@${WVV_GCLOUD_PROJECT}.iam.gserviceaccount.com" --role "roles/owner" --project ${WVV_GCLOUD_PROJECT}`
-#. Create key file:
-   :code:`gcloud iam service-accounts keys create ${WVV_GCLOUD_SERVACC}.json --iam-account "${WVV_GCLOUD_SERVACC}@${WVV_GCLOUD_PROJECT}.iam.gserviceaccount.com"`
-#. Set the environment variable:
-   :code:`export GOOGLE_APPLICATION_CREDENTIALS="${PWD}/${WVV_GCLOUD_SERVACC}.json"`
-#. Create task queue:
-   :code:`gcloud tasks queues create data-import --project ${WVV_GCLOUD_PROJECT}`
-   :code:`gcloud tasks queues update data-import --max-attempts=1 --project ${WVV_GCLOUD_PROJECT}`
-   :code:`gcloud tasks queues update data-import --max-dispatches-per-second=1 --project ${WVV_GCLOUD_PROJECT}`
-#. Deploy the application to the App Engine:
-   :code:`gcloud app deploy dbsync/app.yaml --project ${WVV_GCLOUD_PROJECT}`
-#. Deploy the cron tab to the App Engine:
-   :code:`gcloud app deploy dbsync/cron.yaml --project ${WVV_GCLOUD_PROJECT}`
-#. Debugging: have a lock at the logs
-   :code:`gcloud app logs tail -s default --project ${WVV_GCLOUD_PROJECT}`
-
-Note: the initial maximum runtime length of a task in a Cloud Task is 10 minutes.
-This can be increased upto 24 hours.
-https://cloud.google.com/tasks/docs/dual-overview
-
-
-Deploy in Project's Google Cloud
---------------------------------
-
-This is restricted to the people who work in this project.
-
-This is mostly exactly the same as deploying using your own account,
-except that there is no need to create the project and Firestore
-database.
-
-The project name:
-
-.. code:: bash
-
-   export WVV_GCLOUD_PROJECT=wirvsvirushackathon-271718
 
 
 Data Sources
@@ -257,8 +236,7 @@ https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-
 
 This is a collection of world wide infected and deaths data.
 The original data set contains two location information: the country
-and the ISO code.  The ISO code is used as `adm[0]`, the country is in
-`original.location`.
+and the ISO code.
 
 Terms of Use for this data set can be found on the above WEB page.
 
@@ -292,10 +270,7 @@ mapping is not yet available.
 data.gouv.fr
 ------------
 
-**THIS DATA SET IS CURRENTLY NOT AVAILABLE**
-
-**THE DATA FROM THE ORIGINAL SOURCE IS CURRENTLY ONLY
-PARTIAL AVAILABLE AND IS CURRENTLY NOT AUTOMATICALLY UPDATED.**
+**THIS IS WORK IN PROGRESS!! THIS DATA SET IS NOT YET AVAILABLE**
 
 The French government provides a set of data which does not only
 include the number of infected and deaths, but also the number of
@@ -306,17 +281,12 @@ https://www.data.gouv.fr/en/datasets/donnees-relatives-a-lepidemie-du-covid-19/
 The data is under 'Open License Version 2.0'.
 
 Original data downloaded from https://www.data.gouv.fr/en/datasets/donnees-relatives-a-lepidemie-du-covid-19
-on 2020-03-24.
 
 
 Hospital Numbers
 ................
 
-Data path:
-
-.. code::
-
-   cases/sources/gouv-fr-hospital-numbers
+ID: :code:`gouv_fr_hospital_numbers`
 
 This data set contains information how many people are currently in
 hospital, how many are in critical care, how many died.
@@ -361,34 +331,5 @@ Thanks to Google for supporting this project by providing cloud
 resources on `Google Cloud`_ for database and WEB services.
 
 .. _Google Cloud: https://cloud.google.com/
-
-
-Database Layout
-===============
-
-This is only for those who are interesed in: for a 'normal' user there
-is no need for this.
-
-.. code::
-
-   covid19datapool (collection)
-   |- test (document) [Environment]
-      |- source1 (collection) [Example: johns_hopkins_github]
-      |  |- metadata (document) [Contains: license, last download, ...]
-      |  |- data (document)
-      |     |- collection (collection)
-      |     |  |- data entry 1 (documents)
-      |     |  |- data entry 2 (documents)
-      |- source2 (collection) [Example: ecdc_xlsx]
-      |  |- metadata (document) [Contains: license, last download, ...]
-      |  | --- same as above ---
-      prod (document) [Environment]
-      |   --- same as above ---
-
-The initial idea to have a worldwide unified database can currently
-not be implemented.  There are too many uncertainties and unknowns
-which data set possible includes another.  Therefor for the time
-being, the data is only unified and converted to JSON.
-
 
 ..  LocalWords:  WirVsVirus Hackathon

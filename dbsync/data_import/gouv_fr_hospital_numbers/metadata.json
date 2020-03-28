@@ -1,0 +1,9 @@
+{
+    "id": "gouv_fr_hospital_numbers",
+    "name": "Données des urgences hospitalières et de SOS médecins relatives à l'épidémie de COVID-19"
+    "url": "https://www.data.gouv.fr/en/datasets/donnees-relatives-a-lepidemie-du-covid-19"
+    "license": {
+	"name": "Open License version 2.0",
+	"url": "https://www.etalab.gouv.fr/licence-ouverte-open-licence"
+    }
+}

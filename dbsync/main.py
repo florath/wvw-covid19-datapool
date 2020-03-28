@@ -19,7 +19,7 @@ LOCATION = "europe-west3"
 QUEUE = "data-import"
 
 
-@app.route('/v1/get_all/cases/source/<source>')
+@app.route('/v1/get_all/<source>')
 def lv1_get_all_cases_source(source):
     environment = request.args.get("env", default="prod", type=str)
     rdata, rcode = v1_get_all_cases_source(environment, source)
