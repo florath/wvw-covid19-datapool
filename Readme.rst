@@ -40,6 +40,8 @@ Get complete data sets:
 
    curl https://covid19datapool.appspot.com/v1/get_all/johns_hopkins_github
 
+   curl https://covid19datapool.appspot.com/v1/get_all/gouv_fr_covid19_emergency_room_visits
+
 Data format:
 
 .. code-block:: JSON
@@ -271,7 +273,7 @@ mapping is not yet available.
 data.gouv.fr
 ------------
 
-**THIS IS WORK IN PROGRESS!! THIS DATA SET IS NOT YET AVAILABLE**
+**THIS IS WORK IN PROGRESS!! NOT ALL DATA SOURCES ARE YET CONVERTED**
 
 The French government provides a set of data which does not only
 include the number of infected and deaths, but also the number of
@@ -287,27 +289,24 @@ Original data downloaded from https://www.data.gouv.fr/en/datasets/donnees-relat
 Hospital Numbers
 ................
 
-ID: :code:`gouv_fr_hospital_numbers`
+ID: :code:`gouv_fr_covid19_emergency_room_visits`
 
-This data set contains information how many people are currently in
-hospital, how many are in critical care, how many died.
+This data set contains information about emergengy
+and sos medical acts.
 
 Example:
 
 .. code-block:: JSON
 
-  {
-    "adm": [
-      "FR",
-      "45"
-    ],
-    "sex": "m",
-    "released_from_hospital_total": 3,
-    "hospitalized_current": 19,
-    "critical_care_current": 9,
-    "deaths_total": 0,
-    "timestamp": 1584831600
-  }
+    {
+      "iso-3166-1": "FR",
+      "iso-3166-2": "05",
+      "emergeny-room-visits-covid19-suspicious": 1,
+      "emergeny-room-visits": 52,
+      "hospitalizations-covid19-suspicious": 1,
+      "timestamp": 1583362800,
+      "sex": "f"
+    }
 
 
 References
