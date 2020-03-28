@@ -69,19 +69,17 @@ def handle_one_data_line(line):
 
     nd = {
         'timestamp': ts,
-        'infected': int(line[4].value),
+        'confirmed': int(line[4].value),
         'deaths': int(line[5].value),
         'source': 'ecdc_xlsx',
         'original': {
             'location': line[6].value
         },
-        'location': {
-            'iso-3166-1-alpha2': line[7].value
-        }
+        'iso-3166-1': line[7].value
     }
 
     sha_str = str(ts) + "".join(map(lambda x: str(x.value), line[1:]))
-    return nd, hashlib.sha256(sha_str.encode("utf-8")).hexdigest()
+    return [(nd, sha_str), ]
 
 
 def update_data(environment):
@@ -110,7 +108,7 @@ def import_data_ecdc_xlsx(environment, ignore_errors):
           (environment, ignore_errors))
     if download_xlsx():
         update_data(environment)
-    print("Finished import_data_ecdc_xlsx")
+    print("import_data_ecdc_xlsx finished")
 
 
 if __name__ == '__main__':

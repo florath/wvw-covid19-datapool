@@ -83,6 +83,12 @@ Stadt Münster
 To be checked
 =============
 
+Public data from Canada
+* https://docs.google.com/spreadsheets/d/1D6okqtBS3S2NRC7GFVHzaZ67DuTw7LX49-fqSLwJyeo/edit#gid=942958991
+
+Massnahmen der Regierungen (Grenzschlißungen, Ausgangssperren, ...)
+*  https://www.bsg.ox.ac.uk/research/research-projects/oxford-covid-19-government-response-tracker
+
 * https://docs.google.com/document/d/1DMAisYOtO1RZU7OVzppxrlRGVhjzJNq3eRiKbNHKC-g/edit?ts=5e754850#
 * https://www.heise.de/newsticker/meldung/Corona-Statistik-in-Deutschland-Noch-mehr-Durcheinander-4687788.html
 * https://coronawiki.net/index.php?title=Datenquellen
@@ -105,6 +111,7 @@ To be checked
 Data Visualization
 ==================
 
+* https://chicotobi.shinyapps.io/sim_shiny/
 * http://shiny.science.ku.dk/pbm/COVID19%20-%20Copy/
 * https://devpost.com/software/038_daten_infektionszahlenschatzen
 

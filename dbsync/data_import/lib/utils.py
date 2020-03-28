@@ -5,6 +5,7 @@ Utility / common function for data import
 import datetime
 import json
 import os
+import hashlib
 
 
 def import_data_collection(collection, handle_one_data_line_cb,
@@ -20,26 +21,29 @@ def import_data_collection(collection, handle_one_data_line_cb,
             line_cnt += 1
             if line_cnt % 100 == 0:
                 print("Handled [%d] entries" % line_cnt)
-            data, sha = handle_one_data_line_cb(line)
-            # If there is no need to process any further
-            # (e.g. errornous line), a None is returned.
-            if data is None:
-                continue
-            # First check, if the id is already in the database
-            # based on the cache of ids.
-            if sha in data_available_ids:
-                #print("INFO: Document [%s] already exists "
-                #      "(ID cache check)" % sha)
-                continue
-            # Writing data is limited - check if the data is
-            # already in the DB first.
-            if tab_ref.document(sha).get().exists:
-                # Document (entry) already exists
-                #print("INFO: Document [%s] already exists (DB check)" % sha)
-                continue
-            print("Adding document [%s]" % sha)
-            #print(" [%s]" % data)
-            tab_ref.document(sha).set(data)
+            data_sha_list = handle_one_data_line_cb(line)
+            for ds in data_sha_list:
+                data = ds[0]
+                sha = hashlib.sha256(ds[1].encode("utf-8")).hexdigest()
+                # If there is no need to process any further
+                # (e.g. errornous line), a None is returned.
+                if data is None:
+                    continue
+                # First check, if the id is already in the database
+                # based on the cache of ids.
+                if sha in data_available_ids:
+                    #print("INFO: Document [%s] already exists "
+                    #      "(ID cache check)" % sha)
+                    continue
+                # Writing data is limited - check if the data is
+                # already in the DB first.
+                if tab_ref.document(sha).get().exists:
+                    # Document (entry) already exists
+                    #print("INFO: Document [%s] already exists (DB check)" % sha)
+                    continue
+                print("Adding document [%s]" % sha)
+                #print(" [%s]" % data)
+                tab_ref.document(sha).set(data)
 
         except Exception as ex:
             print("ERROR: line cannot be handled [%s]: [%s]" % (ex, line))

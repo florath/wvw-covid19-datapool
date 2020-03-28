@@ -7,16 +7,15 @@ import io
 import requests
 import json
 import hashlib
+import re
 from html.parser import HTMLParser
 from data_import.lib.utils import import_data_collection, get_available_data_ids
 from google.cloud import firestore
 import dateutil.parser
 
 
-URL_HTML_PAGE = "https://www.data.gouv.fr/en/datasets/donnees-relatives-a-lepidemie-du-covid-19"
-DATA_DOWNLOAD_PREFIX = [
-    'donnees-hospitalieres-covid19'
-]
+URL_HTML_PAGE = "https://www.data.gouv.fr/" \
+    "en/datasets/donnees-relatives-a-lepidemie-du-covid-19"
 
 
 class GouvFrHTMLParser(HTMLParser):
@@ -44,54 +43,195 @@ class GouvFrHTMLParser(HTMLParser):
         return self.__script
 
 
-def handle_one_line(line):
-    '''Converts one line into json
+age_group_lower = {
+    'A': 0,
+    'B': 15,
+    'C': 45,
+    'D': 65,
+    'E': 75
+}
 
-    Format of the input data:
+age_group_upper = {
+    'A': 14,
+    'B': 44,
+    'C': 64,
+    'D': 74
+}
 
-    0   1       2       3       4       5       6
-    dep	sexe	jour	hosp	rea	rad	dc
+# erv - emergency room visits
+# cs - covid19 suspicious
+def create_dataset(line, sex, i_erv_cs, i_erv, i_hosp,
+                   i_sos_med_act_cs, i_sos_med_act):
+    '''Create a dataset (total, male, female) from the given
+    indices'''
 
-    Where is:
-    dep - department
-    sexe - gender (0-total  1-???  2-???)
-    jour - day
-    hosp - Number of people currently hospitalized
-    rea - Number of people currently in resuscitation or critical care
-    rad - Total amount of patient that returned home
-    dc - Total amout of deaths
-    '''
+    # It does not make sense to have datasets in the db
+    # with no statistics data, check if one is set.
+    statistics_data_set = False
 
-    # ToDo: It's an assumption that 1 mean male and 2 female.
-    #       The question was already asked on the web page.
-    #       Waiting for an answer.
+    ts = dateutil.parser.parse(line[1]).timestamp()
 
-    # If sexe is == 0, then this is just the sum from
-    # 1 (assumed man) and 2 (woman).
-    # Therefore this can be skipped.
-    if int(line[1]) == 0:
+    ds = {
+        'iso-3166-1': "FR",
+        'iso-3166-2': str(line[0]),
+        'timestamp': ts
+    }
+    sha = str(line[0]) + str(ts)
+
+    if line[2] in age_group_lower:
+        ds['age-lower'] = age_group_lower[line[2]]
+        sha += line[2]
+    if line[2] in age_group_upper:
+        ds['age-upper'] = age_group_upper[line[2]]
+        sha += line[2]
+    if sex is not None:
+        ds['sex'] = sex
+        sha += sex
+
+    if i_erv_cs is not None and line[i_erv_cs] != '':
+        ds['emergeny-room-visits-covid19-suspicious'] \
+            = int(line[i_erv_cs])
+        sha += line[i_erv_cs]
+        statistics_data_set = True
+    if i_erv is not None and line[i_erv] != '':
+        ds['emergeny-room-visits'] = int(line[i_erv])
+        sha += line[i_erv]
+        statistics_data_set = True
+    if i_hosp is not None and line[i_hosp] != '':
+        ds['hospitalizations-covid19-suspicious'] \
+            = int(line[i_hosp])
+        sha += line[i_hosp]
+        statistics_data_set = True
+    if i_sos_med_act_cs is not None and line[i_sos_med_act_cs] != '':
+        ds['sos-medical-act-covid19-suspicious'] \
+            = int(line[i_sos_med_act_cs])
+        sha += line[i_sos_med_act_cs]
+        statistics_data_set = True
+    if i_sos_med_act is not None and line[i_sos_med_act] != '':
+        ds['sos-medical-act'] = int(line[i_sos_med_act])
+        sha += line[i_sos_med_act]
+        statistics_data_set = True
+
+    if not statistics_data_set:
         return None, None
 
-    ts = dateutil.parser.parse(line[2]).timestamp()
-
-    nd = {
-        'timestamp': ts,
-        # Department is a string, e.g. 2A, 2B for Corsica
-        'adm': ['FR', str(line[0])],
-        'sex': 'm' if int(line[1]) == 1 else 'f',
-        'hospitalized_current': int(line[3]),
-        'critical_care_current': int(line[4]),
-        'released_from_hospital_total': int(line[5]),
-        'deaths_total': int(line[6])
-    }
-    sha_str = ''.join(line)
-    return nd, hashlib.sha256(sha_str.encode("utf-8")).hexdigest()
+    return ds, sha
 
 
-def download_html():
+def handle_gouv_fr_departement_emergency_room_visits(line):
+    '''Converts one line of departement data into JSON
+
+    0: departement
+    1: date of notice
+    2: Age group
+    3: Number of emergency room visits for suspicion of COVID-19
+    4: Total amount of emergency room visits
+    5: Number of hospitalizations among emergency department visits
+       for suspicion of COVID-19
+    6: Number of emergency room visits for suspicion of COVID-19 -
+       Males
+    7: Number of emergency room visits for suspicion of COVID-19 -
+       Females
+    8: Total amount of emergency room visits - Males
+    9: Total amount of emergency room visits - Females
+    10: Number of hospitalizations among emergency department visits
+       for suspicion of COVID-19 - Males
+    11: Number of hospitalizations among emergency department visits
+       for suspicion of COVID-19 - Females
+    12: Number of medical acts (SOS Médecin) for suspicion of COVID-19
+    13: Total amount of medical acts (SOS Médecin)
+    14: Number of medical acts (SOS Médecin) for suspicion of COVID-19
+       - Males
+    15: Number of medical acts (SOS Médecin) for suspicion of COVID-19
+       - Females
+    16: Total amount of medical acts (SOS Médecin) - Males
+    17: Total amount of medical acts (SOS Médecin) - Females
+
+    WHO DID THIS?!?!?!?! IMPOSSIBLE TO HAVE THIS IN ONE TABLE!!!!
+    '''
+
+    assert len(line) == 18
+    ds_total, sha_total = create_dataset(line, None, 3, 4, 5, 12, 13)
+    ds_male, sha_male = create_dataset(line, "m", 6, 8, 10, 14, 16)
+    ds_female, sha_female = create_dataset(line, "f", 7, 9, 11, 15, 17)
+
+    res = []
+    if ds_total is not None:
+        res.append((ds_total, sha_total))
+    if ds_male is not None:
+        res.append((ds_male, sha_male))
+    if ds_female is not None:
+        res.append((ds_female, sha_female))
+
+    return res
+
+def not_implemented():
+    assert False
+
+
+# These are the data which are needed for handling the different
+# files.
+# For each data set there is given:
+# 0: the name of the dataset as it is used in the DB
+# 1: a regular expression which matches the data file name
+# 2: the callback which handles the data
+DATA_MAPPING = [
+    [ 'gouv_fr_covid19_emergency_room_visits',
+      re.compile('sursaud-covid19-quotidien.*-departement.csv'),
+      handle_gouv_fr_departement_emergency_room_visits],
+    [ 'gouv_fr_covid19_daily_region',
+      re.compile('sursaud-covid19-quotidien.*-region.csv'),
+      # TODO!
+      None],
+    [ 'gouv_fr_covid19_daily_departement',
+      re.compile('sursaud-covid19-quotidien.*-france.csv'),
+      # TODO!
+      None],
+    [ 'gouv_fr_covid19_weekly',
+      re.compile('sursaud-covid19-hebdomadaire.*'),
+      # TODO!
+      None],
+    # The following is the description (metadata) of the
+    # data itself. This is not statistical data and
+    # implemented into the source code (used for mapping).
+    [ None,
+      re.compile('metadonnees-donnees-hospitalieres-covid19.*'),
+      None ],
+    [ None,
+      re.compile('metadonnees-services-hospitaliers-covid19.csv'),
+      None ],
+    [ None,
+      re.compile('metadonnee-urgenceshos-sosmedecins-covid19-quot-dep.csv'),
+      None ],
+    [ None,
+      re.compile('metadonnee-urgenceshos-sosmedecin-covid19-quot-reg.csv'),
+      None ],
+    [ None,
+      re.compile('metadonnee-urgenceshos-sosmedecin-covid19-quot-fra.csv'),
+      None ],
+    [ None,
+      re.compile('metadonnee-urgenceshos-sosmedecins-covid19-hebdo.csv'),
+      None ],
+    [ None,
+      re.compile('code-tranches-dage.csv'),
+      None ],
+]
+
+def match_filename(fname):
+    '''Uses the data mapping table to get the correct entry'''
+    print("DEBUG: looking for filename [%s]" % fname)
+    for dm in DATA_MAPPING:
+        if dm[1].match(fname):
+            return dm
+    print("ERROR: Filename does not match [%s]" % fname)
+    return None
+
+
+def download_master_html():
     '''Download the main html page
 
-    This is needed as this seams to be the only source of 
+    The master page is the HTML page that contains links to all data
+    files. This is needed as this seams to be the only source of
     the filenames.
     '''
     html_file = requests.get(URL_HTML_PAGE)
@@ -99,43 +239,70 @@ def download_html():
     parser.feed(html_file.text)
     jdata = json.loads(parser.get_script_data())
 
-    datadict = {}
+    datalist = []
     for dist in jdata['distribution']:
         if dist['@type'] != 'DataDownload':
-            print("WARNING: distribution entry which is not a download [%s]"
-                  % dist)
+            print("WARNING: distribution entry which is not a "
+                  "download [%s]" % dist)
             continue
-        for ddn in DATA_DOWNLOAD_PREFIX:
-            if dist['name'].startswith(ddn):
-                datadict[ddn] = dist
-    # ToDo: Have an indicator when something new is added to the WEB page
-    return datadict
+
+        data_map = match_filename(dist['name'])
+        if data_map is None:
+            print("ERROR: No handler for the file [%s] is available"
+                  % dist['name'])
+            continue
+        if data_map[0] is None:
+            print("INFO: skipping metadata file [%s]" % dist['name'])
+            continue
+        datalist.append([data_map, dist])
+
+    return datalist
 
 
-def update_data(datadict):
+def update_data(datapool, environment):
+    '''Update data in the database given the datasource 'data'
+    '''
+    data = datapool[0]
+    dist = datapool[1]
+    print("Update data [%s] environment [%s]" %
+          (data[0], environment))
+
+    # TODO: Remove!
+    if data[2] == None:
+        print("ERROR: Not implemented data set hander")
+        return
+
     db = firestore.Client()
-    tab_ref = db.collection(u"cases")\
-                .document("sources")\
-                .collection("gouv_fr_hospital_numbers")
+    tab_ref = db.collection(
+        "covid19datapool/%s/%s/data/collection"
+        % (environment, data[0]))
 
     data_available_ids = get_available_data_ids(tab_ref)
 
-    for key, val in datadict.items():
-        csv_content = requests.get(val['contentUrl'])
-        with io.StringIO(csv_content.text) as fd:
-            csv_file = csv.reader(fd, delimiter=';', quotechar='"')
-            # Skip header
-            next(csv_file)
-            import_data_collection(csv_file, handle_one_line, tab_ref, data_available_ids)
+    csv_content = requests.get(dist['contentUrl'])
+
+    if not csv_content.ok:
+        print("ERROR: getting the data file")
+
+    with io.StringIO(csv_content.text) as fd:
+        csv_file = csv.reader(fd, delimiter=',', quotechar='"')
+        # Skip header
+        next(csv_file)
+        import_data_collection(csv_file, data[2],
+                               tab_ref, data_available_ids)
+    print("Finished updating data [%s] environment [%s]"
+          % (data[0], environment))
 
 
-def import_data_gouv_fr():
-    print("Called import_data_gouv_fr")
-    datadict = download_html()
-    update_data(datadict)
-    print("Finished import_data_gouv_fr")
+def import_data_gouv_fr(environment, ignore_errors):
+    print("import_data_gouv_fr called [%s] [%s]" %
+          (environment, ignore_errors))
+    datalist = download_master_html()
+    for data in datalist:
+        update_data(data, environment)
+    print("import_data_gouv_fr finished")
 
 
 if __name__ == '__main__':
     '''For (local) testing'''
-    import_data_gouv_fr()
+    import_data_gouv_fr("prod", True)

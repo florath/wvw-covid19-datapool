@@ -1,12 +1,14 @@
 Cleanup and Basics
 ++++++++++++++++++
 
+* Add number of data rows into metadata
+
 * Unify location information.
   Suggestion:
 
   location: {
     iso-3166-1-alpha2: CC
-    iso-3166-2: REGC
+    iso-3166-2: [REGC1, REGC2, ..]
 
     wgs84: {
       longitude: -4.5555
@@ -61,6 +63,13 @@ Cleanup and Basics
 
 Possible Data Sources
 +++++++++++++++++++++
+
+???
+
+https://secure.pt-dlr.de/pt-conference/conference/PROTOTYPEFUND8/
+
+
+
 
 There are many data sources. Some might be included here in the database.
 
