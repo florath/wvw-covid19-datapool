@@ -8,7 +8,6 @@ import shutil
 import os
 import requests
 import datetime
-import hashlib
 from google.cloud import firestore
 
 from data_import.lib.utils import import_data_collection, \
@@ -78,7 +77,7 @@ def handle_one_data_line(line):
         'iso-3166-1': line[7].value
     }
 
-    sha_str = str(ts) + "".join(map(lambda x: str(x.value), line[1:]))
+    sha_str = "".join(map(lambda x: str(x.value), line))
     return [(nd, sha_str), ]
 
 

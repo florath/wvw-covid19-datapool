@@ -84,10 +84,10 @@ def handle_one_data_line_2020_02(line):
         if len(line) > 6:
             # Then the longitute and latitude are given
             nd['longitude'] = convert2float(line[6])
-            ns['latitude'] = convert2float(line[7])
+            nd['latitude'] = convert2float(line[7])
 
         sha_str = "".join(line)
-        return nd, sha_str
+        return [(nd, sha_str), ]
 
     except ValueError as ve:
         # If there is a problem e.g. converting the ts
@@ -128,7 +128,7 @@ def handle_one_data_line_2020_03(line):
         }
 
         sha_str = "".join(line)
-        return nd, sha_str
+        return [(nd, sha_str), ]
 
     except ValueError as ve:
         # If there is a problem e.g. converting the ts

@@ -6,7 +6,8 @@ import datetime
 import json
 import os
 import hashlib
-
+import traceback
+import sys
 
 def import_data_collection(collection, handle_one_data_line_cb,
                            tab_ref, data_available_ids):
@@ -47,6 +48,7 @@ def import_data_collection(collection, handle_one_data_line_cb,
 
         except Exception as ex:
             print("ERROR: line cannot be handled [%s]: [%s]" % (ex, line))
+            traceback.print_exc(file=sys.stdout)
 
 
 def get_available_data_ids(tab_ref):
