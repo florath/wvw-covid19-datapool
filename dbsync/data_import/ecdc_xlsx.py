@@ -115,4 +115,4 @@ def import_data_ecdc_xlsx(environment, ignore_errors):
 
 if __name__ == '__main__':
     '''For (local) testing: only update the data'''
-    update_data("test")
+    update_data("prod")
