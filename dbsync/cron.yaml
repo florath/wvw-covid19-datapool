@@ -9,3 +9,6 @@ cron:
   - description: "Update French Governement data"
     url: /v1/trigger/import_data/gouv_fr
     schedule: every 357 minutes
+  - description: "Update RKI data"
+    url: /v1/trigger/import_data/rki_cases
+    schedule: every 355 minutes

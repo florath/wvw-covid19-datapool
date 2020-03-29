@@ -36,11 +36,11 @@ Get complete data sets:
 
 .. code:: bash
 
-   curl https://covid19datapool.appspot.com/v1/get_all/ecdc_xlsx
+   curl https://covid19datapool.appspot.com/v1/get_all/<name>
 
-   curl https://covid19datapool.appspot.com/v1/get_all/johns_hopkins_github
-
-   curl https://covid19datapool.appspot.com/v1/get_all/gouv_fr_covid19_emergency_room_visits
+   where name is one of:
+      ecdc_xlsx johns_hopkins_github gouv_fr_covid19_emergency_room_visits
+      rki_cases
 
 Data format:
 
@@ -241,6 +241,20 @@ by the ECDC.
 
 .. _metadata-ecdc-xlsx.json: dbsync/data_import/ecdc_xlsx/metadata.json
 
+
+gouv.fr
+-------
+
+The French government provides a set of data about emergency cases and
+sos medical acts.
+
+* ID: :code:`gouv_fr_covid19_emergency_room_visits`
+* JSON meta data: `metadata-gouv_fr_covid19_emergency_room_visits.json`_
+* Area: France
+
+.. _metadata-gouv_fr_covid19_emergency_room_visits.json: dbsync/data_import/gouv_fr_hospital_numbers/metadata.json
+
+
 Johns Hopkins GitHub
 --------------------
 
@@ -256,18 +270,21 @@ information about the US.
 * Area: world
 
 .. _metadata-johns_hopkins_github.json: dbsync/data_import/johns_hopkins_github/metadata.json
-  
-data.gouv.fr
-------------
 
-The French government provides a set of data about emergency cases and
-sos medical acts.
 
-* ID: :code:`gouv_fr_covid19_emergency_room_visits`
-* JSON meta data: `metadata-gouv_fr_covid19_emergency_room_visits.json`_
-* Area: France
+Robert-Koch-Instritute Cases Data
+---------------------------------
 
-.. _metadata-gouv_fr_covid19_emergency_room_visits.json: dbsync/data_import/gouv_fr_hospital_numbers/metadata.json
+This is the 'standard' data set for Germany.
+
+It is not allowed to use this data for commercial use.
+
+* ID: :code:`rki_cases`
+* JSON meta data: `metadata-rki_cases.json`_
+* Area: world
+
+.. _metadata-rki_cases.json: dbsync/rki_cases/metadata.json
+
 
 References
 ==========

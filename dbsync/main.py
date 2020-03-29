@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
 import json
+import os
 from flask import Flask, request
 
 from data_import.johns_hopkins_github import import_data_johns_hopkins_github
 from data_import.ecdc_xlsx import import_data_ecdc_xlsx
 from data_import.gouv_fr import import_data_gouv_fr
+from rki_cases.update import update_data_rki_cases
 from data_retrieval.v1_get_all import v1_get_all_cases_source
 from google.cloud import tasks_v2
 from google.protobuf import timestamp_pb2
@@ -14,7 +16,7 @@ from google.protobuf import timestamp_pb2
 app = Flask(__name__)
 
 
-PROJECT = "wirvsvirushackathon-271718"
+PROJECT = os.environ['GOOGLE_CLOUD_PROJECT']
 LOCATION = "europe-west3"
 QUEUE = "data-import"
 
@@ -82,6 +84,9 @@ def import_data():
                 jdata['environment'], jdata['ignore-errors'])
         elif source == 'gouv_fr':
             import_data_gouv_fr(
+                jdata['environment'], jdata['ignore-errors'])
+        elif source == 'rki_cases':
+            update_data_rki_cases(
                 jdata['environment'], jdata['ignore-errors'])
         else:
             print("*** ERROR: unknown source [%s]" % source)

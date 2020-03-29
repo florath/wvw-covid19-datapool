@@ -3,6 +3,7 @@
 import datetime
 import time
 import json
+import os
 from flask import Flask, request, Response
 from data_retrieval.v1_get_all import v1_get_all_cases_source
 
@@ -33,4 +34,7 @@ def time_url():
 
 @app.route('/')
 def main():
+
+    print("ENVIRONMENT", os.environ)
+    
     return 'Hello, World!'

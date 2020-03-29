@@ -108,7 +108,11 @@ Massnahmen der Regierungen (Grenzschlißungen, Ausgangssperren, ...)
 * https://devpost.com/software/1_038_a_daten_datawarehousing
 * https://covid-19-apis.postman.com/
 * https://www.google.com/url?q=https://coronadatascraper.com/%23home&sa=D&ust=1585425454069000&usg=AFQjCNE9AML4v4AJ7kyD_64DJJxebgJxcg
+* https://medium.com/@tomaspueyo/coronavirus-act-today-or-people-will-die-f4d3d9cd99ca
+* https://www.who.int/emergencies/diseases/novel-coronavirus-2019/global-research-on-novel-coronavirus-2019-ncov
+* https://npgeo-corona-npgeo-de.hub.arcgis.com/datasets/dd4580c810204019a7b8eb3e0b329dd6_0/geoservice?orderBy=AnzahlFall&orderByAsc=false
 
+  
 Data Visualization
 ==================
 
@@ -116,6 +120,8 @@ Data Visualization
 * http://shiny.science.ku.dk/pbm/COVID19%20-%20Copy/
 * https://devpost.com/software/038_daten_infektionszahlenschatzen
 
+'My' project
+* https://github.com/paul-em/covid-19-curves
   
 Modelling
 =========

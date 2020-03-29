@@ -1,0 +1,19 @@
+{
+    "id": "rki_cases",
+    "name": "COVID-19 Daten des Robert Koch Instituts",
+    "url": "http://corona.rki.de",
+    "license": {
+	"text": "Commercial use of the data is prohibited"
+    },
+    "data-fields": {
+	"timestamp": "in seconds since EPOCH; time / date given in the data set",
+	"confirmed": "confirmed COVID-19 cases (AnzahlFall)",
+	"deaths": "deaths because of COVID-19 (AnzahlTodesfall)",
+	"iso-3166-1": "DE - for the complete data set",
+	"iso-3166-2": "Last two chars of iso 3166-2 for German regions (Bundesländer)",
+	"original": "Some (location) data from the original dataset, esp Landkreis",
+	"age-lower": "(optional) computed from the age group field. Only set if age group is given",
+	"age-upper": "(optional) computed from the age group field. Only set if age group is given",
+	"sex": "'m' or 'f' - if given in the original dataset"
+    }
+}
