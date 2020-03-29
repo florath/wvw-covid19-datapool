@@ -107,6 +107,7 @@ Massnahmen der Regierungen (Grenzschlißungen, Ausgangssperren, ...)
 * https://devpost.com/software/038_daten_infektionszahlenschatzen
 * https://devpost.com/software/1_038_a_daten_datawarehousing
 * https://covid-19-apis.postman.com/
+* https://www.google.com/url?q=https://coronadatascraper.com/%23home&sa=D&ust=1585425454069000&usg=AFQjCNE9AML4v4AJ7kyD_64DJJxebgJxcg
 
 Data Visualization
 ==================

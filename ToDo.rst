@@ -1,20 +1,13 @@
 Cleanup and Basics
 ++++++++++++++++++
 
+* Try to scale down to B2 (from B4)?
+
+* ToDo: merge the two branches
+
+* ToDo: Johns-Hopkins data: add iso-3166-2 field
+
 * Add number of data rows into metadata
-
-* Unify location information.
-  Suggestion:
-
-  location: {
-    iso-3166-1-alpha2: CC
-    iso-3166-2: [REGC1, REGC2, ..]
-
-    wgs84: {
-      longitude: -4.5555
-      latitude: 7.877
-      }
-    }
 
 * All information in the original dataset is copied
   (with appropriate documention) to the 'original' key.
