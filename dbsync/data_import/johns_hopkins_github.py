@@ -139,10 +139,10 @@ def handle_one_data_line_2020_03(line):
 def get_callback_based_on_header(header):
     '''Depending on the header return the appropriate callback function'''
 
+    if header[0][0] == '\ufeff':
+        header[0] = header[0][1:]
+
     if header == ['Province/State', 'Country/Region', 'Last Update',
-                  'Confirmed', 'Deaths', 'Recovered']:
-        return handle_one_data_line_2020_02
-    if header == ['\ufeffProvince/State', 'Country/Region', 'Last Update',
                   'Confirmed', 'Deaths', 'Recovered']:
         return handle_one_data_line_2020_02
     if header == ['Province/State', 'Country/Region', 'Last Update',
