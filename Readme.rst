@@ -236,9 +236,10 @@ This is a collection of world wide infected and deaths data collected
 by the ECDC.
 
 * ID: :code:`ecdc-xlsx`
-* JSON meta data: [metadata.json](dbsync/data_import/ecdc_xlsx/metadata.json)
+* JSON meta data: `metadata.json`_
 * Area: world
 
+.. _metadata.json: dbsync/data_import/ecdc_xlsx/metadata.json
 
 Johns Hopkins GitHub
 --------------------
@@ -263,9 +264,10 @@ The French government provides a set of data about emergency cases and
 sos medical acts.
 
 * ID: :code:`gouv_fr_covid19_emergency_room_visits`
-* JSON meta data: [metadata.json](dbsync/data_import/gouv_fr_hospital_numbers/metadata.json)
+* JSON meta data: `metadata.json`_
 * Area: France
 
+.. _metadata.json: dbsync/data_import/gouv_fr_hospital_numbers/metadata.json
 
 References
 ==========
