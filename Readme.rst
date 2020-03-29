@@ -272,8 +272,8 @@ information about the US.
 .. _metadata-johns_hopkins_github.json: dbsync/data_import/johns_hopkins_github/metadata.json
 
 
-Robert-Koch-Instritute Cases Data
----------------------------------
+Robert-Koch-Institut Cases Data
+-------------------------------
 
 This is the 'standard' data set for Germany.
 

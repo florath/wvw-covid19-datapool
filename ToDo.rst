@@ -5,6 +5,9 @@ Cleanup and Basics
 
 * ToDo: merge the two branches
 
+* Reconcile / incremental update
+  as two different methods to implement.
+
 * Remove ids/data which is no longer valid
 
 * ToDo: Johns-Hopkins data: add iso-3166-2 field
