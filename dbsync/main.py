@@ -19,18 +19,6 @@ LOCATION = "europe-west3"
 QUEUE = "data-import"
 
 
-@app.route('/v1/get_all/<source>')
-def lv1_get_all_cases_source(source):
-    environment = request.args.get("env", default="prod", type=str)
-    rdata, rcode = v1_get_all_cases_source(environment, source)
-    response = app.response_class(
-        status=rcode,
-        response=json.dumps(rdata),
-        mimetype='application/json'
-    )
-    return response
-
-
 # This is an internally used interface
 # which will change at any time.
 # Don't use it!

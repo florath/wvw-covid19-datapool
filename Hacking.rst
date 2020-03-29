@@ -30,7 +30,9 @@ world money.**
    :code:`gcloud tasks queues update data-import --max-attempts=1 --project ${WVV_GCLOUD_PROJECT}`
    :code:`gcloud tasks queues update data-import --max-dispatches-per-second=1 --project ${WVV_GCLOUD_PROJECT}`
 #. Deploy the application to the App Engine:
+   :code:`gcloud app deploy dbquery/app.yaml --project ${WVV_GCLOUD_PROJECT}`
    :code:`gcloud app deploy dbsync/app.yaml --project ${WVV_GCLOUD_PROJECT}`
+   :code:`gcloud app deploy dispatch.yaml --project ${WVV_GCLOUD_PROJECT}`
 #. Deploy the cron tab to the App Engine:
    :code:`gcloud app deploy dbsync/cron.yaml --project ${WVV_GCLOUD_PROJECT}`
 #. Debugging: have a lock at the logs

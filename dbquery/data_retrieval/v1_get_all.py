@@ -30,14 +30,18 @@ def v1_get_all_cases_source(environment, source):
 
     def data_generator():
         doc_cnt = 0
+        is_first_doc = True
         yield b"["
         yield json.dumps(metadata).encode()
         yield b","
         tab_ref = db.collection(
             "covid19datapool/%s/%s/data/collection" % (environment, source))
         for doc in tab_ref.stream():
+            if not is_first_doc:
+                yield ","
             yield json.dumps(doc.to_dict()).encode()
             doc_cnt += 1
+            is_first_doc = False
         print("v1_get_all_cases_source environment [%s] source [%s] "
               "send [%d] docs" % (environment, source, doc_cnt))
         yield b"]"
