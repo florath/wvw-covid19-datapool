@@ -251,10 +251,11 @@ and location details.  The latest data includes very detailed
 information about the US.
 
 * ID: :code:`johns_hopkins_github`
-* JSON meta data: [metadata.json](dbsync/data_import/johns_hopkins_github/metadata.json)
+* JSON meta data: `metadata.json`_
 * Area: world
 
-
+.. _metadata.json: dbsync/data_import/johns_hopkins_github/metadata.json
+  
 data.gouv.fr
 ------------
 
