@@ -236,10 +236,10 @@ This is a collection of world wide infected and deaths data collected
 by the ECDC.
 
 * ID: :code:`ecdc-xlsx`
-* JSON meta data: `metadata.json`_
+* JSON meta data: `metadata-ecdc-xlsx.json`_
 * Area: world
 
-.. _metadata.json: dbsync/data_import/ecdc_xlsx/metadata.json
+.. _metadata-ecdc-xlsx.json: dbsync/data_import/ecdc_xlsx/metadata.json
 
 Johns Hopkins GitHub
 --------------------
@@ -252,10 +252,10 @@ and location details.  The latest data includes very detailed
 information about the US.
 
 * ID: :code:`johns_hopkins_github`
-* JSON meta data: `metadata.json`_
+* JSON meta data: `metadata-johns_hopkins_github.json`_
 * Area: world
 
-.. _metadata.json: dbsync/data_import/johns_hopkins_github/metadata.json
+.. _metadata-johns_hopkins_github.json: dbsync/data_import/johns_hopkins_github/metadata.json
   
 data.gouv.fr
 ------------
@@ -264,10 +264,10 @@ The French government provides a set of data about emergency cases and
 sos medical acts.
 
 * ID: :code:`gouv_fr_covid19_emergency_room_visits`
-* JSON meta data: `metadata.json`_
+* JSON meta data: `metadata-gouv_fr_covid19_emergency_room_visits.json`_
 * Area: France
 
-.. _metadata.json: dbsync/data_import/gouv_fr_hospital_numbers/metadata.json
+.. _metadata-gouv_fr_covid19_emergency_room_visits.json: dbsync/data_import/gouv_fr_hospital_numbers/metadata.json
 
 References
 ==========
