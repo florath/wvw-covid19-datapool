@@ -5,6 +5,8 @@ Cleanup and Basics
 
 * ToDo: merge the two branches
 
+* Remove ids/data which is no longer valid
+
 * ToDo: Johns-Hopkins data: add iso-3166-2 field
 
 * Add number of data rows into metadata

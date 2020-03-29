@@ -189,11 +189,10 @@ fields are optional:
 * indected: integer
 * recovered: integer
 * source: string; the source of the data
-* location: dict;
-  
-  - iso-3166-1-alpha2: 2 chars
-  - wgs84: { longitute: latitude: }: coordinates
-
+* iso-3166-1: 2 chars
+* iso-3166-2: string
+* longitute
+* latitude
 * original: dictionary; random data of the original data set
   which is (currently) not mapped
 
@@ -223,87 +222,48 @@ REST Interface
 TBD.
 
 
-
 Data Sources
 ============
+
+Every data source has a description in JSON format.  This contains the
+license, information about the data fields and other information.  A
+reference to this JSON file is given in each data source description.
 
 ecdc: European Centre for Disease Prevention and Control
 --------------------------------------------------------
 
-ID: :code:`ecdc-xlsx`
+This is a collection of world wide infected and deaths data collected
+by the ECDC.
 
-https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
-
-This is a collection of world wide infected and deaths data.
-The original data set contains two location information: the country
-and the ISO code.
-
-Terms of Use for this data set can be found on the above WEB page.
-
-Excerpt:
-
-*Users of ECDC public-use data files must comply with data use
-restrictions to ensure that the information will be used solely for
-statistical analysis or reporting purposes.* 
+* ID: :code:`ecdc-xlsx`
+* JSON meta data: [metadata.json](dbsync/data_import/ecdc_xlsx/metadata.json)
+* Area: world
 
 
 Johns Hopkins GitHub
 --------------------
 
-ID: :code:`johns_hopkins_github`
+This is a collection and aggregation of many other data sources from
+the Johns-Hopkins CSSE.
 
-https://github.com/CSSEGISandData/COVID-19
+The format of the data changes from time to time. Also the detailes
+and location details.  The latest data includes very detailed
+information about the US.
 
-This is a collection and aggregation of many other data sources.
-
-List of data sources and Terms of Use can be found on the above WEB page.
-
-To convert the 'unusual' location information, the table which was
-created during the WirVsVirusHackathon, was used as the initial base:
-
-https://docs.google.com/spreadsheets/d/1hequqFkVIsF_BCMm4IlHJAWmHI7EcVbV4PvSPQu7hpc/edit#gid=1514093616
-
-Currently only a mapping of the country is done - as the region
-mapping is not yet available.
+* ID: :code:`johns_hopkins_github`
+* JSON meta data: [metadata.json](dbsync/data_import/johns_hopkins_github/metadata.json)
+* Area: world
 
 
 data.gouv.fr
 ------------
 
-**THIS IS WORK IN PROGRESS!! NOT ALL DATA SOURCES ARE YET CONVERTED**
+The French government provides a set of data about emergency cases and
+sos medical acts.
 
-The French government provides a set of data which does not only
-include the number of infected and deaths, but also the number of
-people in hospital or on intensive care unit.
-
-https://www.data.gouv.fr/en/datasets/donnees-relatives-a-lepidemie-du-covid-19/
-
-The data is under 'Open License Version 2.0'.
-
-Original data downloaded from https://www.data.gouv.fr/en/datasets/donnees-relatives-a-lepidemie-du-covid-19
-
-
-Hospital Numbers
-................
-
-ID: :code:`gouv_fr_covid19_emergency_room_visits`
-
-This data set contains information about emergengy
-and sos medical acts.
-
-Example:
-
-.. code-block:: JSON
-
-    {
-      "iso-3166-1": "FR",
-      "iso-3166-2": "05",
-      "emergeny-room-visits-covid19-suspicious": 1,
-      "emergeny-room-visits": 52,
-      "hospitalizations-covid19-suspicious": 1,
-      "timestamp": 1583362800,
-      "sex": "f"
-    }
+* ID: :code:`gouv_fr_covid19_emergency_room_visits`
+* JSON meta data: [metadata.json](dbsync/data_import/gouv_fr_hospital_numbers/metadata.json)
+* Area: France
 
 
 References
