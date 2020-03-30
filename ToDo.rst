@@ -1,6 +1,10 @@
 Cleanup and Basics
 ++++++++++++++++++
 
+* Include italien data
+
+* Include spanisch data
+
 * Try to scale down to B2 (from B4)?
 
 * ToDo: merge the two branches

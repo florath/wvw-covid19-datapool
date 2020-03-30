@@ -85,6 +85,7 @@ To be checked
 
 Public data from Canada
 * https://docs.google.com/spreadsheets/d/1D6okqtBS3S2NRC7GFVHzaZ67DuTw7LX49-fqSLwJyeo/edit#gid=942958991
+* https://docs.google.com/spreadsheets/d/1D6okqtBS3S2NRC7GFVHzaZ67DuTw7LX49-fqSLwJyeo/edit#gid=0
 
 Massnahmen der Regierungen (Grenzschlißungen, Ausgangssperren, ...)
 *  https://www.bsg.ox.ac.uk/research/research-projects/oxford-covid-19-government-response-tracker
@@ -111,7 +112,17 @@ Massnahmen der Regierungen (Grenzschlißungen, Ausgangssperren, ...)
 * https://medium.com/@tomaspueyo/coronavirus-act-today-or-people-will-die-f4d3d9cd99ca
 * https://www.who.int/emergencies/diseases/novel-coronavirus-2019/global-research-on-novel-coronavirus-2019-ncov
 * https://npgeo-corona-npgeo-de.hub.arcgis.com/datasets/dd4580c810204019a7b8eb3e0b329dd6_0/geoservice?orderBy=AnzahlFall&orderByAsc=false
-
+* https://trello.com/b/8kXmqRHA/corvid19-datawarehousing
+* https://docs.google.com/spreadsheets/d/1CW99DTTWFO5T3oiERzRaHGqpAQ_J-3PfwaMibUgJp4Y/edit#gid=262317549
+* https://devpost.com/software/lake-covid
+* http://shiny.science.ku.dk/pbm/COVID19%20-%20Copy/
+* https://docs.google.com/document/d/1DMAisYOtO1RZU7OVzppxrlRGVhjzJNq3eRiKbNHKC-g/edit?ts=5e754850#heading=h.5pi6rxw1lsix
+* https://www.bsg.ox.ac.uk/research/research-projects/oxford-covid-19-government-response-tracker
+* https://github.com/CoronaDataHub/Frontend
+* http://wiki.bitplan.com/index.php/SPARQL
+* https://www.reddit.com/r/MachineLearning/comments/fks234/nd_resources_and_channels_to_help_with_covid19/
+* https://www.kaggle.com/allen-institute-for-ai/CORD-19-research-challenge?utm_medium=email&utm_source=intercom&utm_campaign=CORD-19-research-chal-email
+* https://www.kaggle.com
   
 Data Visualization
 ==================
@@ -122,6 +133,11 @@ Data Visualization
 
 'My' project
 * https://github.com/paul-em/covid-19-curves
+
+Overviews
+* https://interaktiv.morgenpost.de/corona-virus-karte-infektionen-deutschland-weltweit/
+* https://gcber.org/corona/?scene=126&clicktime=1582908487&from=singlemessage&isappinstalled=0
+* https://nextstrain.org/ncov?l=radial
   
 Modelling
 =========

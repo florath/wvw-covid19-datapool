@@ -42,6 +42,27 @@ Get complete data sets:
       ecdc_xlsx johns_hopkins_github gouv_fr_covid19_emergency_room_visits
       rki_cases
 
+And the 10 liner to read and display the data:
+
+.. code:: python
+
+   '''Download and prepare:
+   curl https://covid19datapool.appspot.com/v1/get_all/johns_hopkins_github | jq ".[1]" >johns_hopkins_github.json
+   '''
+   import pandas as pd
+   import matplotlib.pyplot as plt
+
+   COUNTRY = "DE"
+
+   data = pd.read_json("file:data/%s.json" % name)
+   data_jh = data.loc[(data['timestamp'] > '2020-02-15') & (data['iso-3166-1'] == COUNTRY)]
+   data_jh.plot(x="timestamp", y=["deaths", "infected"], kind="line")
+   plt.show()
+
+.. image:: images/pandas-plot.png
+   :alt: "Example plot of the data"
+   
+
 Data format:
 
 .. code-block:: JSON
@@ -186,7 +207,7 @@ fields are optional:
 
 * timestamp: interger; seconds since EPOCH
 * deaths: integer
-* indected: integer
+* infected: integer
 * recovered: integer
 * source: string; the source of the data
 * iso-3166-1: 2 chars

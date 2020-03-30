@@ -34,7 +34,7 @@ def v1_get_all_cases_source(environment, source):
         is_first_doc = True
         yield b"["
         yield json.dumps(metadata).encode()
-        yield b","
+        yield b",["
         tab_ref = db.collection(
             "covid19datapool/%s/%s/data/collection" % (environment, source))
         for doc in tab_ref.stream():
@@ -45,7 +45,7 @@ def v1_get_all_cases_source(environment, source):
             is_first_doc = False
         print("v1_get_all_cases_source environment [%s] source [%s] "
               "send [%d] docs" % (environment, source, doc_cnt))
-        yield b"]"
+        yield b"]]"
 
     print("v1_get_all_cases_source finished")
     return data_generator, 200

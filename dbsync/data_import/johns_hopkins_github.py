@@ -112,7 +112,7 @@ def handle_one_data_line_2020_03(line):
         ts = convert_ts(line[4])
         nd = {
             'timestamp': ts,
-            'confirmed': convert2int(line[7]),
+            'infected': convert2int(line[7]),
             'deaths': convert2int(line[8]),
             'recovered': convert2int(line[9]),
             'source': 'johns_hopkins_github',

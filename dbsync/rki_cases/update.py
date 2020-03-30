@@ -69,7 +69,7 @@ def handle_obj_cb(jobj):
 
     nd = {
         'timestamp': data['Meldedatum'] / 1000.0, # given in ms
-        'confirmed': data['AnzahlFall'],
+        'infected': data['AnzahlFall'],
         'deaths': data['AnzahlTodesfall'],
         'iso-3166-1': 'DE',
         'iso-3166-2': DE_REG_MAPPING[data['Bundesland']],

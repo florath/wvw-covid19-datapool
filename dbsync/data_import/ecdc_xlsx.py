@@ -68,7 +68,7 @@ def handle_one_data_line(line):
 
     nd = {
         'timestamp': ts,
-        'confirmed': int(line[4].value),
+        'infected': int(line[4].value),
         'deaths': int(line[5].value),
         'source': 'ecdc_xlsx',
         'original': {
