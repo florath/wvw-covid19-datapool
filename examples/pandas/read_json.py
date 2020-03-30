@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 COUNTRY = "DE"
 
-data = pd.read_json("file:data/%s.json" % name)
+data = pd.read_json("file:johns_hopkins_github.json")
 data_jh = data.loc[(data['timestamp'] > '2020-02-15') & (data['iso-3166-1'] == COUNTRY)]
 data_jh.plot(x="timestamp", y=["deaths", "infected"], kind="line")
 plt.show()

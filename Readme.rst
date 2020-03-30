@@ -54,7 +54,7 @@ And the 10 liner to read and display the data:
 
    COUNTRY = "DE"
 
-   data = pd.read_json("file:data/%s.json" % name)
+   data = pd.read_json("file:data/johns_hopkins_github.json")
    data_jh = data.loc[(data['timestamp'] > '2020-02-15') & (data['iso-3166-1'] == COUNTRY)]
    data_jh.plot(x="timestamp", y=["deaths", "infected"], kind="line")
    plt.show()
