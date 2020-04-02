@@ -5,6 +5,35 @@ Cleanup and Basics
 
 * Include spanisch data
 
+* The Johns-Hopkins date included some 'unassinged'
+  How do we handle this?
+
+  41059,Umatilla,Oregon,US,2020-03-28 23:05:37,45.59073056,-118.7353826,4,0,0,0,"Umatilla, Oregon, US"
+  ,Unassigned,Alaska,US,2020-03-28 23:05:37,0.0,0.0,0,1,0,0,"Unassigned, Alaska, US"
+  ,Unassigned,Arizona,US,2020-03-28 23:05:37,0.0,0.0,0,4,0,0,"Unassigned, Arizona, US"
+  ,Unassigned,Arkansas,US,2020-03-28 23:05:37,0.0,0.0,32,4,0,0,"Unassigned, Arkansas, US"
+  ,Unassigned,Colorado,US,2020-03-28 23:05:37,0.0,0.0,136,1,0,0,"Unassigned, Colorado, US"
+  ,Unassigned,Florida,US,2020-03-28 23:05:37,0.0,0.0,0,8,0,0,"Unassigned, Florida, US"
+  ,Unassigned,Georgia,US,2020-03-28 23:05:37,0.0,0.0,230,2,0,0,"Unassigned, Georgia, US"
+  ,Unassigned,Hawaii,US,2020-03-28 23:05:37,0.0,0.0,4,0,0,0,"Unassigned, Hawaii, US"
+  ,Unassigned,Illinois,US,2020-03-28 23:05:37,0.0,0.0,8,0,0,0,"Unassigned, Illinois, US"
+  ,Unassigned,Kentucky,US,2020-03-28 23:05:37,0.0,0.0,150,0,0,0,"Unassigned, Kentucky, US"
+  ,Unassigned,Louisiana,US,2020-03-28 23:05:37,0.0,0.0,9,1,0,0,"Unassigned, Louisiana, US"
+  ,Unassigned,Maine,US,2020-03-28 23:05:37,0.0,0.0,3,0,0,0,"Unassigned, Maine, US"
+  ,Unassigned,Maryland,US,2020-03-28 23:05:37,0.0,0.0,0,1,0,0,"Unassigned, Maryland, US"
+  ,Unassigned,Massachusetts,US,2020-03-28 23:05:37,0.0,0.0,356,9,0,0,"Unassigned, Massachusetts, US"
+  ,Unassigned,Michigan,US,2020-03-28 23:05:37,0.0,0.0,47,0,0,0,"Unassigned,Michigan,US"
+  ,Unassigned,Nevada,US,2020-03-28 23:05:37,0.0,0.0,93,0,0,0,"Unassigned, Nevada, US"
+  ,Unassigned,New Jersey,US,2020-03-28 23:05:37,0.0,0.0,2478,86,0,0,"Unassigned, New Jersey, US"
+  ,Unassigned,New York,US,2020-03-28 23:05:37,0.0,0.0,0,109,0,0,"Unassigned, New York, US"
+  ,Unassigned,Rhode Island,US,2020-03-28 23:05:37,0.0,0.0,107,2,0,0,"Unassigned, Rhode Island, US"
+  ,Unassigned,Tennessee,US,2020-03-28 23:05:37,0.0,0.0,161,4,0,0,"Unassigned, Tennessee, US"
+  ,Unassigned,Vermont,US,2020-03-28 23:05:37,0.0,0.0,7,7,0,0,"Unassigned, Vermont, US"
+  ,Unassigned,Washington,US,2020-03-28 23:05:37,0.0,0.0,0,0,0,0,"Unassigned, Washington, US"
+  ,Unassigned,Wisconsin,US,2020-03-28 23:05:37,0.0,0.0,0,0,0,0,"Unassigned, Wisconsin, US"
+  47171,Unicoi,Tennessee,US,2020-03-28 23:05:37,36.10890856,-82.43709629,1,0,0,0,"Unicoi, Tennessee, US"
+
+
 * Try to scale down to B2 (from B4)?
 
 * ToDo: merge the two branches
