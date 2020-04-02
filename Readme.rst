@@ -126,6 +126,8 @@ correctly interpreted numbers. Please help to improve the situation!
 Introduction
 ============
 
+[![Build Status](https://travis-ci.com/florath/wvv-covid19-datapool.svg?branch=master)](https://travis-ci.com/florath/wvv-covid19-datapool)
+
 This datapool (database) tries to collect data from different sources
 and provides them (refurbished) as a simple to use REST interface.
 
