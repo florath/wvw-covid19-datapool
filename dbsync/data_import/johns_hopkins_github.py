@@ -4,16 +4,15 @@ the Johns Hopkins CSSE data set
 '''
 
 import csv
-import dateutil.parser
-import git
 import os
 import shutil
-import hashlib
 import tempfile
-from google.cloud import firestore
+
+import git
+import useful_func
 from data_import.lib.utils import import_data_collection, \
     get_available_data_ids, ls, update_metadata
-
+from google.cloud import firestore
 
 GIT_REPO_URL = "https://github.com/CSSEGISandData/COVID-19.git"
 DATA_DIR = "csse_covid_19_data/csse_covid_19_daily_reports"
@@ -27,30 +26,6 @@ with open(COUNTRY2ISO_MAPPING, newline='') as csvfile:
         country2iso[line[0]] = line[1]
 
 
-def convert2int(s):
-    '''Convert the given string to int. If the string is empty, return 0.'''
-    if s == '':
-        return 0
-    return int(s)
-
-
-def convert2float(s):
-    '''Converts the given string to a Floating-Point Number.
-    If the string is empty, return 0.
-    This is necessary for longitude and latitude.'''
-    if s == '':
-        return 0.0
-    return float(s)
-
-
-def convert_ts(ts_str):
-    '''A generic date / time converter.
-
-    This is needed because the data set uses (at least) three
-    different ways of specifying date / times.'''
-    return dateutil.parser.parse(ts_str).timestamp()
-
-
 def handle_one_data_line_2020_02(line):
     '''Converts one data line into json
 
@@ -61,7 +36,7 @@ def handle_one_data_line_2020_02(line):
        6        7
     '''
     try:
-        ts = convert_ts(line[2])
+        ts = useful_func.convert_ts(line[2])
 
         location = [line[1]]
         if line[0] != '':
@@ -69,9 +44,9 @@ def handle_one_data_line_2020_02(line):
 
         nd = {
             'timestamp': ts,
-            'infected': convert2int(line[3]),
-            'deaths': convert2int(line[4]),
-            'recovered': convert2int(line[5]),
+            'infected': useful_func.convert2int(line[3]),
+            'deaths': useful_func.convert2int(line[4]),
+            'recovered': useful_func.convert2int(line[5]),
             'source': 'johns_hopkins_github',
             'original': {
                 'location': location
@@ -83,8 +58,8 @@ def handle_one_data_line_2020_02(line):
 
         if len(line) > 6:
             # Then the longitute and latitude are given
-            nd['longitude'] = convert2float(line[6])
-            nd['latitude'] = convert2float(line[7])
+            nd['longitude'] = useful_func.convert2float(line[6])
+            nd['latitude'] = useful_func.convert2float(line[7])
 
         sha_str = "".join(line)
         return [(nd, sha_str), ]
@@ -109,12 +84,12 @@ def handle_one_data_line_2020_03(line):
     '''
 
     try:
-        ts = convert_ts(line[4])
+        ts = useful_func.convert_ts(line[4])
         nd = {
             'timestamp': ts,
-            'infected': convert2int(line[7]),
-            'deaths': convert2int(line[8]),
-            'recovered': convert2int(line[9]),
+            'infected': useful_func.convert2int(line[7]),
+            'deaths': useful_func.convert2int(line[8]),
+            'recovered': useful_func.convert2int(line[9]),
             'source': 'johns_hopkins_github',
             'original': {
                 'location': [line[3], line[2], line[1], line[0]]
@@ -123,8 +98,8 @@ def handle_one_data_line_2020_03(line):
             # , Azerbaijan,2020-02-28T15:03:26,1,0,0
             'iso-3166-1': country2iso[line[3].strip()],
             # ToDo: fill in missing iso-3166-2 region code
-            'longitude': convert2float(line[6]),
-            'latitude': convert2float(line[5])
+            'longitude': useful_func.convert2float(line[6]),
+            'latitude': useful_func.convert2float(line[5])
         }
 
         sha_str = "".join(line)
