@@ -83,6 +83,9 @@ Stadt Münster
 To be checked
 =============
 
+* Mapping of Regions of Johns-Hopkins
+https://github.com/WolfgangFahl/jhuregionmapper
+
 Public data from Canada
 * https://docs.google.com/spreadsheets/d/1D6okqtBS3S2NRC7GFVHzaZ67DuTw7LX49-fqSLwJyeo/edit#gid=942958991
 * https://docs.google.com/spreadsheets/d/1D6okqtBS3S2NRC7GFVHzaZ67DuTw7LX49-fqSLwJyeo/edit#gid=0

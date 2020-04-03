@@ -33,16 +33,13 @@ Cleanup and Basics
   ,Unassigned,Wisconsin,US,2020-03-28 23:05:37,0.0,0.0,0,0,0,0,"Unassigned, Wisconsin, US"
   47171,Unicoi,Tennessee,US,2020-03-28 23:05:37,36.10890856,-82.43709629,1,0,0,0,"Unicoi, Tennessee, US"
 
-
-* Try to scale down to B2 (from B4)?
-
-* ToDo: merge the two branches
-
 * Reconcile / incremental update
   as two different methods to implement.
 
 * Remove ids/data which is no longer valid
 
+* Problem: find a sensible hirachical administration data structure of the world.
+  
 * ToDo: Johns-Hopkins data: add iso-3166-2 field
 
 * Add number of data rows into metadata
