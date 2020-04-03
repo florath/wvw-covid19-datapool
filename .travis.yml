@@ -7,4 +7,5 @@ python:
 install:
   - pip install -U pylint
 script:
-  - pylint wvv-covid19-datapool
+  - pylint dbsync
+  - pylint dbquery
