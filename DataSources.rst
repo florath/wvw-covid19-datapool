@@ -146,3 +146,10 @@ Modelling
 =========
 
 * https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Modellierung_Deutschland.pdf?__blob=publicationFile
+
+Sonstiges
+=========
+
+* https://www.sueddeutsche.de/politik/coronavirus-kliniken-anzahl-betten-1.4865776
+  Contradicts intensive care Belegune: 02. April
+  Paper vom RKI: >5000  --- Süddeutsche ca. 1500 Intensivbetten wirklich belegt

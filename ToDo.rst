@@ -5,6 +5,14 @@ Cleanup and Basics
 
 * Include spanisch data
 
+* ECDC: use (new) JSON instead if propriatary xlsx
+  Currently some data is TWICE!
+
+* ECDC: updated license
+
+* ECDC: unclear if data is cummulated or day by day
+
+
 * The Johns-Hopkins date included some 'unassinged'
   How do we handle this?
 
