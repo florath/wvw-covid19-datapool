@@ -11,30 +11,12 @@ import traceback
 import sys
 
 
-def get_available_data_ids(tab_ref):
-    '''Retrieve all available ids (keys) of the collection'''
-
-    print("get_available_data_ids called")
-    data_available_ids = []
-    print("get_available_data_ids read stream")
-    doc_cnt = 0
-    for doc in tab_ref.stream():
-        doc_cnt += 1
-        if doc_cnt % 500 == 0:
-            print("get_available_data_ids read document [%d]" % doc_cnt)
-        data_available_ids.append(doc.id)
-    print("Loaded [%d] ids of data already available"
-          % len(data_available_ids))
-    print("get_available_data_ids finished")
-    return data_available_ids
-
-
 class DataCollectionImporter:
 
-    def __init__(self, tab_ref, name):
-        self.__tab_ref = tab_ref
+    def __init__(self, dbclient, name):
+        self.__dbclient = dbclient
         self.__name = name
-        self.__data_available_ids = get_available_data_ids(tab_ref)
+        self.__data_available_ids = dbclient. get_available_data_ids()
         # List of all ids which are in the DB but not in the (current)
         # dataset (any longer).  These need to be deleted.
         self.__to_be_deleted_ids = copy.deepcopy(self.__data_available_ids)
@@ -52,30 +34,30 @@ class DataCollectionImporter:
                 if line_cnt % 500 == 0:
                     print("[%s] Handled [%d] entries" %
                           (self.__name, line_cnt))
-                data_sha_list = handle_one_data_line_cb(line)
-                for ds in data_sha_list:
+                data_hashv_list = handle_one_data_line_cb(line)
+                for ds in data_hashv_list:
                     data = ds[0]
-                    sha = hashlib.sha256(ds[1].encode("utf-8")).hexdigest()
+                    hashv = hashlib.sha256(ds[1].encode("utf-8")).hexdigest()
                     # If there is no need to process any further
                     # (e.g. errornous line), a None is returned.
                     if data is None:
                         continue
-                    # Remove the sha from the list
-                    if sha in self.__to_be_deleted_ids:
-                        self.__to_be_deleted_ids.remove(sha)
+                    # Remove the hashv from the list
+                    if hashv in self.__to_be_deleted_ids:
+                        self.__to_be_deleted_ids.remove(hashv)
                     # First check, if the id is already in the database
                     # based on the cache of ids.
-                    if sha in self.__data_available_ids:
+                    if hashv in self.__data_available_ids:
                         # print("INFO: Document [%s] already exists "
-                        #       "(ID cache check)" % sha)
+                        #       "(ID cache check)" % hashv)
                         continue
                     # Writing data is limited - check if the data is
                     # already in the DB first.
-                    if self.__tab_ref.document(sha).get().exists:
+                    if self.__dbclient.exists(hashv):
                         # Document (entry) already exists
                         continue
-                    print("[%s] Adding document [%s]" % (self.__name, sha))
-                    self.__tab_ref.document(sha).set(data)
+                    print("[%s] Adding document [%s]" % (self.__name, hashv))
+                    self.__dbclient.insert(hashv, data)
 
             except Exception as ex:
                 print("ERROR: line cannot be handled [%s]: [%s]" % (ex, line))

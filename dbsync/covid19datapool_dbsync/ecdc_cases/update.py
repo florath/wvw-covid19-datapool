@@ -10,10 +10,10 @@ xml under a fixed URL.
 import datetime
 import json
 import requests
-from google.cloud import firestore
+import importlib
 
 from lib.data_import import DataCollectionImporter
-from lib.metadata import update_metadata
+
 
 DOWNLOAD_URL = "https://opendata.ecdc.europa.eu/covid19/casedistribution/json"
 
@@ -47,19 +47,19 @@ def handle_one_data_line(line):
     return [(new_data, sha_str), ]
 
 
-def update_data(environment, jdata):
+def update_data(environment, jdata, dbenv):
     '''Update the data in the database'''
-    database = firestore.Client()
-    tab_ref = database.collection(
-        "covid19datapool/%s/ecdc_cases/data/collection" % environment)
-    dci = DataCollectionImporter(tab_ref, "ecdc_cases")
+    dbmod = importlib.import_module("lib.db.%s" % dbenv)
+    dbclient = dbmod.DBClient("ecdc_cases", environment)
+
+    dci = DataCollectionImporter(dbclient, "ecdc_cases")
     dci.import_data(jdata, handle_one_data_line)
     dci.remove_old_data()
-    update_metadata(database, "ecdc_cases/metadata.json",
-                    environment, "ecdc_cases")
+    dbclient.update_metadata("ecdc_cases/metadata.json")
+    dbclient.sync()
 
 
-def update_data_ecdc_cases(environment, ignore_errors):
+def update_data_ecdc_cases(environment, ignore_errors, dbenv="google_firestore"):
     '''Main function to update all ecdc cases'''
     print("update_data_ecdc_cases called [%s] [%s]" %
           (environment, ignore_errors))
@@ -67,10 +67,10 @@ def update_data_ecdc_cases(environment, ignore_errors):
     if jdata is None:
         print("ERROR: cannot download data")
         return
-    update_data(environment, jdata['records'])
+    update_data(environment, jdata['records'], dbenv)
     print("update_data_ecdc_cases finished")
 
 
 if __name__ == '__main__':
     # For (local) testing: only update the data
-    update_data_ecdc_cases("prod", False)
+    update_data_ecdc_cases("prod", False, "python_json")

@@ -9,10 +9,10 @@ import json
 import hashlib
 import re
 from html.parser import HTMLParser
-from google.cloud import firestore
 import dateutil.parser
+import importlib
+
 from lib.data_import import DataCollectionImporter
-from lib.metadata import update_metadata
 
 
 URL_HTML_PAGE = "https://www.data.gouv.fr/" \
@@ -261,7 +261,7 @@ def download_master_html():
     return datalist
 
 
-def update_data(datapool, environment):
+def update_data(datapool, environment, dbenv):
     '''Update data in the database given the datasource 'data'
     '''
     data = datapool[0]
@@ -274,13 +274,12 @@ def update_data(datapool, environment):
         print("ERROR: Not implemented data set hander")
         return
 
-    db = firestore.Client()
-    tab_ref = db.collection(
-        "covid19datapool/%s/%s/data/collection"
-        % (environment, data[0]))
+    dbmod = importlib.import_module("lib.db.%s" % dbenv)
+    dbclient = dbmod.DBClient(
+        "gouv_fr_covid19_emergency_room_visits", environment)
 
     dci = DataCollectionImporter(
-        tab_ref, "gouv_fr_covid19_emergency_room_visits")
+        dbclient, "gouv_fr_covid19_emergency_room_visits")
 
     csv_content = requests.get(dist['contentUrl'])
 
@@ -295,22 +294,22 @@ def update_data(datapool, environment):
     dci.remove_old_data()
 
     # For each table, insert the metadata
-    update_metadata(db, "gouv_fr/metadata.json",
-                    environment, "gouv_fr_covid19_emergency_room_visits")
+    dbclient.update_metadata("gouv_fr/metadata.json")
+    dbclient.sync()
  
     print("Finished updating data [%s] environment [%s]"
           % (data[0], environment))
 
 
-def import_data_gouv_fr(environment, ignore_errors):
+def import_data_gouv_fr(environment, ignore_errors, dbenv="google_firestore"):
     print("import_data_gouv_fr called [%s] [%s]" %
           (environment, ignore_errors))
     datalist = download_master_html()
     for data in datalist:
-        update_data(data, environment)
+        update_data(data, environment, dbenv)
     print("import_data_gouv_fr finished")
 
 
 if __name__ == '__main__':
     '''For (local) testing'''
-    import_data_gouv_fr("prod", True)
+    import_data_gouv_fr("prod", True, "python_json")

@@ -7,11 +7,9 @@ import requests
 import json
 import pycountry
 import re
-
-from google.cloud import firestore
+import importlib
 
 from lib.data_import import DataCollectionImporter
-from lib.metadata import update_metadata, get_metadata_from_db
 
 
 # Need to prepare this - as there is no funtion to
@@ -20,6 +18,7 @@ DE_REG_MAPPING = {}
 for sd in pycountry.subdivisions:
     if sd.country_code == 'DE':
         DE_REG_MAPPING[sd.name] = sd.code[3:]
+
 
 def handle_obj_cb(jobj):
     '''Handle / convert one data row
@@ -138,36 +137,42 @@ def generator_rki_data(last_updated):
             break
 
 
-def update_data(db, environment, last_updated):
+def update_data(dbclient, last_updated):
     '''Update data'''
-    tab_ref = db.collection(
-        "covid19datapool/%s/rki_cases/data/collection" % environment)
-    dci = DataCollectionImporter(tab_ref, "rki_cases")
+    dci = DataCollectionImporter(dbclient, "rki_cases")
     dci.import_data(generator_rki_data(last_updated), handle_obj_cb)
     dci.remove_old_data()
 
-def update_data_rki_cases(environment, ignore_errors):
+
+def update_data_rki_cases(environment, ignore_errors,
+                          dbenv="google_firestore"):
     print("update_data_rki_cases called [%s] [%s]" %
           (environment, ignore_errors))
 
-    db = firestore.Client()
-    metadata_from_db = get_metadata_from_db(db, environment, "rki_cases")
+    print("update_data_rki_cases importing database backend [%s]"
+          % dbenv)
+    dbmod = importlib.import_module("lib.db.%s" % dbenv)
+    dbclient = dbmod.DBClient("rki_cases", environment)
+
+    # Not needed - see below
+    # metadata_from_db = get_metadata_from_db(db, environment, "rki_cases")
 
     # date --date 2020-01-01 "+%s"
     last_updated = 1577833200
+    #last_updated = 1585951200
     # ToDo: this needs rework as it currently deleted
     #       all the old data!
     #if metadata_from_db is not None and 'last_updated' in metadata_from_db:
     #    last_updated = metadata_from_db['last_updated']
     print("INFO: last updated [%d]" % last_updated)
 
-    update_data(db, environment, last_updated)
-    update_metadata(db, "rki_cases/metadata.json",
-                    environment, "rki_cases")
+    update_data(dbclient, last_updated)
+    dbclient.update_metadata("rki_cases/metadata.json")
     print("update_data_rki_cases finished [%s] [%s]" %
           (environment, ignore_errors))
+    dbclient.sync()
 
 
 if __name__ == '__main__':
     '''For (local) testing: only update the data'''
-    update_data_rki_cases("prod", True)
+    update_data_rki_cases("prod", True, 'python_json')

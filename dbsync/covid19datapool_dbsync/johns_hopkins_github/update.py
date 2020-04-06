@@ -10,9 +10,9 @@ import os
 import shutil
 import hashlib
 import tempfile
-from google.cloud import firestore
+import importlib
+
 from lib.data_import import DataCollectionImporter
-from lib.metadata import update_metadata
 
 
 GIT_REPO_URL = "https://github.com/CSSEGISandData/COVID-19.git"
@@ -181,29 +181,29 @@ def update_git(tmp_dir):
     print("update_git finished [%s]" % tmp_dir)
 
 
-def update_data(tmp_dir, environment):
+def update_data(tmp_dir, environment, dbenv):
     '''Reads in the data from the git repo, converts it and
     pushes it into the DB'''
     print("update_data called [%s] [%s]" % (tmp_dir, environment))
     print("update_data creating connection to Firestore")
-    db = firestore.Client()
-    tab_ref = db.collection(
-        "covid19datapool/%s/johns_hopkins_github/data/collection" % environment)
+    dbmod = importlib.import_module("lib.db.%s" % dbenv)
+    dbclient = dbmod.DBClient("johns_hopkins_github", environment)
 
     print("update_data handle files")
-    dci = DataCollectionImporter(tab_ref, "johns_hopkins_github")
+    dci = DataCollectionImporter(dbclient, "johns_hopkins_github")
     for fname in os.listdir(os.path.join(tmp_dir, DATA_DIR)):
         if fname.endswith(".csv"):
             print("update_data handling file [%s]" % fname)
-            handle_one_data_file(tab_ref, dci,
+            handle_one_data_file(dbclient, dci,
                                  os.path.join(tmp_dir, DATA_DIR, fname))
     dci.remove_old_data()
-    update_metadata(db, "johns_hopkins_github/metadata.json",
-                    environment, "johns_hopkins_github")
+    dbclient.update_metadata("johns_hopkins_github/metadata.json")
+    dbclient.sync()
     print("update_data finished [%s]" % tmp_dir)
 
 
-def import_data_johns_hopkins_github(environment, ignore_errors):
+def import_data_johns_hopkins_github(environment, ignore_errors,
+                                     dbenv="google_firestore"):
     print("import_data_johns_hopkins_github called [%s] [%s]" %
           (environment, ignore_errors))
     print("import_data_johns_hopkins_github start pre-process checks")
@@ -212,7 +212,7 @@ def import_data_johns_hopkins_github(environment, ignore_errors):
         tmp_dir = tempfile.mkdtemp(prefix="johns-hopkins-github", dir="/tmp")
         print("import_data_johns_hopkins_github start [%s]" % tmp_dir)
         update_git(tmp_dir)
-        update_data(tmp_dir, environment)
+        update_data(tmp_dir, environment, dbenv)
         print("import_data_johns_hopkins_github finished [%s]" % tmp_dir)
     except Exception as ex:
         print("import_data_johns_hopkins_github Exception [%s]" % ex)
@@ -226,4 +226,4 @@ def import_data_johns_hopkins_github(environment, ignore_errors):
 
 if __name__ == '__main__':
     '''For (local) testing: only update the data'''
-    update_data("/tmp/jh-covid-19", "prod")
+    update_data("/tmp/jh-covid-19", "prod", "python_json")
