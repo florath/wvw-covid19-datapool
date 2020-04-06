@@ -1,0 +1,16 @@
+{
+    "id": "ecdc_cases",
+    "name": "ecdc: European Centre for Disease Prevention and Control",
+    "url": "https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide",
+    "license": {
+	"name": "ECDC Copyright and Limited Reproduction Notices",
+	"url": "https://www.ecdc.europa.eu/en/copyright"
+    },
+    "data-fields": {
+	"timestamp": "in seconds since EPOCH; time / date given in the data set",
+	"iso-3166-1": "The two letter country code - as read from the original source",
+	"confirmed_new": "confirmed COVID-19 cases of the last time interval",
+	"deaths_new": "deaths because of COVID-19 of the last time interval",
+	"original": "especially location information for the original data set"
+    }
+}

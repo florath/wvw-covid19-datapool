@@ -9,10 +9,10 @@ import json
 import hashlib
 import re
 from html.parser import HTMLParser
-from data_import.lib.utils import import_data_collection, \
-    get_available_data_ids, update_metadata
 from google.cloud import firestore
 import dateutil.parser
+from lib.data_import import DataCollectionImporter
+from lib.metadata import update_metadata
 
 
 URL_HTML_PAGE = "https://www.data.gouv.fr/" \
@@ -218,6 +218,7 @@ DATA_MAPPING = [
       None ],
 ]
 
+
 def match_filename(fname):
     '''Uses the data mapping table to get the correct entry'''
     print("DEBUG: looking for filename [%s]" % fname)
@@ -278,7 +279,8 @@ def update_data(datapool, environment):
         "covid19datapool/%s/%s/data/collection"
         % (environment, data[0]))
 
-    data_available_ids = get_available_data_ids(tab_ref)
+    dci = DataCollectionImporter(
+        tab_ref, "gouv_fr_covid19_emergency_room_visits")
 
     csv_content = requests.get(dist['contentUrl'])
 
@@ -289,11 +291,11 @@ def update_data(datapool, environment):
         csv_file = csv.reader(fd, delimiter=',', quotechar='"')
         # Skip header
         next(csv_file)
-        import_data_collection(csv_file, data[2],
-                               tab_ref, data_available_ids)
+        dci.import_data(csv_file, data[2])
+    dci.remove_old_data()
 
     # For each table, insert the metadata
-    update_metadata(db, "data_import/gouv_fr_hospital_numbers/metadata.json",
+    update_metadata(db, "gouv_fr/metadata.json",
                     environment, "gouv_fr_covid19_emergency_room_visits")
  
     print("Finished updating data [%s] environment [%s]"

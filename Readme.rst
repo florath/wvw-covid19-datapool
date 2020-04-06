@@ -179,9 +179,7 @@ the French government. Based on this data, the Markov transition
 probabilities in the last paper_ from the RKI can be checked (page 4,
 Fig 1). If it would be possible to make more precise and substantiated
 statements here about estimates of the dark figure ('infected but not
-tested').  (Example: Would the model published by the RKI, which is
-not country-specific, applied in Italy, you would currently get there
-to over 700,000 infected.)
+tested').
 
 .. _paper: https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Modellierung_Deutschland.pdf?__blob=publicationFile
 

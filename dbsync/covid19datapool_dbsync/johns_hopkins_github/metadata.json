@@ -7,9 +7,9 @@
     },
     "data-fields": {
 	"timestamp": "in seconds since EPOCH; time / date given in the data set",
-	"confirmed": "confirmed COVID-19 cases",
-	"deaths": "deaths because of COVID-19",
-	"recovered": "number of recovered",
+	"confirmed_total": "confirmed COVID-19 cases - in total",
+	"deaths_total": "deaths because of COVID-19 - in total",
+	"recovered_total": "number of recovered - in total",
 	"original": "especially location information for the original data set",
 	"iso-3166-1": "the two char country code - mapped via an internal DB",
 	"longitude": "longitude - if given",

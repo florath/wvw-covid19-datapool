@@ -17,7 +17,7 @@ def v1_get_all_cases_source(environment, source):
         return '["Invalid environment"]', 422
 
     # Check if the source really exists
-    if source not in ['johns_hopkins_github', 'ecdc_xlsx',
+    if source not in ['johns_hopkins_github', 'ecdc_cases',
                       'gouv_fr_covid19_emergency_room_visits',
                       'rki_cases']:
         print("Invalid source [%s]" % source)

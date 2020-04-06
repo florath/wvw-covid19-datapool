@@ -8,9 +8,8 @@ import os
 from flask import Flask, request
 from google.cloud import tasks_v2
 
-from data_import.johns_hopkins_github import import_data_johns_hopkins_github
-from data_import.gouv_fr import import_data_gouv_fr
-
+from gouv_fr.update import import_data_gouv_fr
+from johns_hopkins_github.update import import_data_johns_hopkins_github
 from ecdc_cases.update import update_data_ecdc_cases
 from rki_cases.update import update_data_rki_cases
 

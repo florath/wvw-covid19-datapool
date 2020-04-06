@@ -10,8 +10,8 @@ import re
 
 from google.cloud import firestore
 
-from data_import.lib.utils import import_data_collection, \
-    get_available_data_ids, ls, update_metadata, get_metadata_from_db
+from lib.data_import import DataCollectionImporter
+from lib.metadata import update_metadata, get_metadata_from_db
 
 
 # Need to prepare this - as there is no funtion to
@@ -142,10 +142,9 @@ def update_data(db, environment, last_updated):
     '''Update data'''
     tab_ref = db.collection(
         "covid19datapool/%s/rki_cases/data/collection" % environment)
-    data_available_ids = get_available_data_ids(tab_ref)
-    import_data_collection(generator_rki_data(last_updated), handle_obj_cb,
-                           tab_ref, data_available_ids)
-
+    dci = DataCollectionImporter(tab_ref, "rki_cases")
+    dci.import_data(generator_rki_data(last_updated), handle_obj_cb)
+    dci.remove_old_data()
 
 def update_data_rki_cases(environment, ignore_errors):
     print("update_data_rki_cases called [%s] [%s]" %
@@ -156,8 +155,10 @@ def update_data_rki_cases(environment, ignore_errors):
 
     # date --date 2020-01-01 "+%s"
     last_updated = 1577833200
-    if metadata_from_db is not None and 'last_updated' in metadata_from_db:
-        last_updated = metadata_from_db['last_updated']
+    # ToDo: this needs rework as it currently deleted
+    #       all the old data!
+    #if metadata_from_db is not None and 'last_updated' in metadata_from_db:
+    #    last_updated = metadata_from_db['last_updated']
     print("INFO: last updated [%d]" % last_updated)
 
     update_data(db, environment, last_updated)

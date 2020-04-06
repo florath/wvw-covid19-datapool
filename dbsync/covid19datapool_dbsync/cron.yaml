@@ -4,7 +4,7 @@ cron:
     url: /v1/trigger/import_data/johns_hopkins_github
     schedule: every 361 minutes
   - description: "Update ECDC data"
-    url: /v1/trigger/import_data/ecdc_xlsx
+    url: /v1/trigger/import_data/ecdc_cases
     schedule: every 359 minutes
   - description: "Update French Governement data"
     url: /v1/trigger/import_data/gouv_fr

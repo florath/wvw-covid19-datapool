@@ -11,13 +11,13 @@ import shutil
 import hashlib
 import tempfile
 from google.cloud import firestore
-from data_import.lib.utils import import_data_collection, \
-    get_available_data_ids, ls, update_metadata
+from lib.data_import import DataCollectionImporter
+from lib.metadata import update_metadata
 
 
 GIT_REPO_URL = "https://github.com/CSSEGISandData/COVID-19.git"
 DATA_DIR = "csse_covid_19_data/csse_covid_19_daily_reports"
-COUNTRY2ISO_MAPPING = "data_import/jh-country2iso.csv"
+COUNTRY2ISO_MAPPING = "johns_hopkins_github/jh-country2iso.csv"
 
 
 country2iso = {}
@@ -69,9 +69,9 @@ def handle_one_data_line_2020_02(line):
 
         nd = {
             'timestamp': ts,
-            'infected': convert2int(line[3]),
-            'deaths': convert2int(line[4]),
-            'recovered': convert2int(line[5]),
+            'infected_total': convert2int(line[3]),
+            'deaths_total': convert2int(line[4]),
+            'recovered_total': convert2int(line[5]),
             'source': 'johns_hopkins_github',
             'original': {
                 'location': location
@@ -112,9 +112,9 @@ def handle_one_data_line_2020_03(line):
         ts = convert_ts(line[4])
         nd = {
             'timestamp': ts,
-            'infected': convert2int(line[7]),
-            'deaths': convert2int(line[8]),
-            'recovered': convert2int(line[9]),
+            'infected_total': convert2int(line[7]),
+            'deaths_total': convert2int(line[8]),
+            'recovered_total': convert2int(line[9]),
             'source': 'johns_hopkins_github',
             'original': {
                 'location': [line[3], line[2], line[1], line[0]]
@@ -158,7 +158,7 @@ def get_callback_based_on_header(header):
     return None
 
 
-def handle_one_data_file(tab_ref, data_available_ids, fname):
+def handle_one_data_file(tab_ref, dci, fname):
     with open(fname, newline='') as csvfile:
         content = csv.reader(csvfile, delimiter=',', quotechar='"')
         header = next(content)
@@ -167,7 +167,7 @@ def handle_one_data_file(tab_ref, data_available_ids, fname):
             print("No callback available for the data file [%s] - skipping"
                   % fname)
             return
-        import_data_collection(content, hod_cb, tab_ref, data_available_ids)
+        dci.import_data(content, hod_cb)
 
 
 def update_git(tmp_dir):
@@ -190,16 +190,15 @@ def update_data(tmp_dir, environment):
     tab_ref = db.collection(
         "covid19datapool/%s/johns_hopkins_github/data/collection" % environment)
 
-    print("update_data retrieve existing ids")
-    data_available_ids = get_available_data_ids(tab_ref)
-
     print("update_data handle files")
+    dci = DataCollectionImporter(tab_ref, "johns_hopkins_github")
     for fname in os.listdir(os.path.join(tmp_dir, DATA_DIR)):
         if fname.endswith(".csv"):
             print("update_data handling file [%s]" % fname)
-            handle_one_data_file(tab_ref, data_available_ids,
+            handle_one_data_file(tab_ref, dci,
                                  os.path.join(tmp_dir, DATA_DIR, fname))
-    update_metadata(db, "data_import/johns_hopkins_github/metadata.json",
+    dci.remove_old_data()
+    update_metadata(db, "johns_hopkins_github/metadata.json",
                     environment, "johns_hopkins_github")
     print("update_data finished [%s]" % tmp_dir)
 
@@ -208,7 +207,6 @@ def import_data_johns_hopkins_github(environment, ignore_errors):
     print("import_data_johns_hopkins_github called [%s] [%s]" %
           (environment, ignore_errors))
     print("import_data_johns_hopkins_github start pre-process checks")
-    ls("/tmp")
     print("import_data_johns_hopkins_github finished pre-process checks")
     try:
         tmp_dir = tempfile.mkdtemp(prefix="johns-hopkins-github", dir="/tmp")
@@ -223,7 +221,6 @@ def import_data_johns_hopkins_github(environment, ignore_errors):
 
     # Check for remaining files in /tmp
     print("import_data_johns_hopkins_github cleanup check started")
-    ls("/tmp")
     print("import_data_johns_hopkins_github cleanup check finished")
 
 

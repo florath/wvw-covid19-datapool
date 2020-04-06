@@ -126,6 +126,9 @@ Massnahmen der Regierungen (Grenzschlißungen, Ausgangssperren, ...)
 * https://www.reddit.com/r/MachineLearning/comments/fks234/nd_resources_and_channels_to_help_with_covid19/
 * https://www.kaggle.com/allen-institute-for-ai/CORD-19-research-challenge?utm_medium=email&utm_source=intercom&utm_campaign=CORD-19-research-chal-email
 * https://www.kaggle.com
+* http://wiki.bitplan.com/index.php/Predict_the_Curve_Flattening#Data_Collection
+* https://ourworldindata.org/coronavirus
+  
   
 Data Visualization
 ==================

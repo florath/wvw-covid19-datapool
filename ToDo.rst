@@ -1,6 +1,14 @@
 Cleanup and Basics
 ++++++++++++++++++
 
+* Transaction check:
+  is updarte running?
+
+* RKI: update + synchronize complete
+  update: do not remove data!
+
+* Include WHO data
+
 * Include italien data
 
 * Include spanisch data
