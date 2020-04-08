@@ -4,16 +4,14 @@ the Johns Hopkins CSSE data set
 '''
 
 import csv
-import dateutil.parser
-import git
+import importlib
 import os
 import shutil
-import hashlib
 import tempfile
-import importlib
 
+import dateutil.parser
+import git
 from lib.data_import import DataCollectionImporter
-
 
 GIT_REPO_URL = "https://github.com/CSSEGISandData/COVID-19.git"
 DATA_DIR = "csse_covid_19_data/csse_covid_19_daily_reports"
@@ -95,6 +93,51 @@ def handle_one_data_line_2020_02(line):
         print("ERROR converting [%s]: [%s]" (line, ve))
 
 
+def handle_unassigned_data(line):
+    '''Handles one data line, which has in the Admin2 field a "Unassigned"/
+     parameter.
+    The Format of the input data is the as in handle_one_data_line_2020_03:
+     0       1            2           3                 4         5
+    FIPS, Admin2, Province/State, Country/Region, Last Update, Latitude,/
+    Longitude, Confirmed, Deaths, Recovered, (Active)
+        6          7        8         9
+    Active is ignored, because it is not clear what is meant by Active.
+    It seems like almost all entries are filled with 0.
+
+    If Admin2 is set to "Unassigned" and it has 0 Death,/
+    0 Confirmed and 0 Recovered cases, this line will be ignored.
+    '''
+    if line[7] and line[8] and line[9] == 0:
+        pass
+    else:
+        try:
+            ts = convert_ts(line[4])
+            nd = {
+                'timestamp': ts,
+                'infected_total': convert2int(line[7]),
+                'deaths_total': convert2int(line[8]),
+                'recovered_total': convert2int(line[9]),
+                'source': 'johns_hopkins_github',
+                'original': {
+                    'location': [line[3], line[2], line[1], line[0]]
+                },
+                # The 'strip()' is needed because of incorrect input data, e.g.
+                # , Azerbaijan,2020-02-28T15:03:26,1,0,0
+                'iso-3166-1': country2iso[line[3].strip()],
+                # ToDo: fill in missing iso-3166-2 region code
+                'longitude': convert2float(line[6]),
+                'latitude': convert2float(line[5])
+            }
+
+            sha_str = "".join(line)
+            return [(nd, sha_str), ]
+
+        except ValueError as ve:
+            # If there is a problem e.g. converting the ts
+            # just go on.
+            print("ERROR converting [%s]: [%s]"(line, ve))
+
+
 def handle_one_data_line_2020_03(line):
     '''Converts one data line into json
 
@@ -110,25 +153,28 @@ def handle_one_data_line_2020_03(line):
 
     try:
         ts = convert_ts(line[4])
-        nd = {
-            'timestamp': ts,
-            'infected_total': convert2int(line[7]),
-            'deaths_total': convert2int(line[8]),
-            'recovered_total': convert2int(line[9]),
-            'source': 'johns_hopkins_github',
-            'original': {
-                'location': [line[3], line[2], line[1], line[0]]
-            },
-            # The 'strip()' is needed because of incorrect input data, e.g.
-            # , Azerbaijan,2020-02-28T15:03:26,1,0,0
-            'iso-3166-1': country2iso[line[3].strip()],
-            # ToDo: fill in missing iso-3166-2 region code
-            'longitude': convert2float(line[6]),
-            'latitude': convert2float(line[5])
-        }
+        if line[2] == 'Unassigned':
+            handle_unassigned_data(line)
+        else:
+            nd = {
+                'timestamp': ts,
+                'infected_total': convert2int(line[7]),
+                'deaths_total': convert2int(line[8]),
+                'recovered_total': convert2int(line[9]),
+                'source': 'johns_hopkins_github',
+                'original': {
+                    'location': [line[3], line[2], line[1], line[0]]
+                },
+                # The 'strip()' is needed because of incorrect input data, e.g.
+                # , Azerbaijan,2020-02-28T15:03:26,1,0,0
+                'iso-3166-1': country2iso[line[3].strip()],
+                # ToDo: fill in missing iso-3166-2 region code
+                'longitude': convert2float(line[6]),
+                'latitude': convert2float(line[5])
+            }
 
-        sha_str = "".join(line)
-        return [(nd, sha_str), ]
+            sha_str = "".join(line)
+            return [(nd, sha_str), ]
 
     except ValueError as ve:
         # If there is a problem e.g. converting the ts
