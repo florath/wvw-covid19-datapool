@@ -9,3 +9,4 @@ install:
 script:
   - pylint dbsync
   - pylint dbquery
+  - pylint examples/pandas
