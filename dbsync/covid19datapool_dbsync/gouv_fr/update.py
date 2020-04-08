@@ -13,6 +13,7 @@ import dateutil.parser
 import importlib
 
 from lib.data_import import DataCollectionImporter
+from lib.parse_args import parse_args_common
 
 
 URL_HTML_PAGE = "https://www.data.gouv.fr/" \
@@ -312,4 +313,5 @@ def import_data_gouv_fr(environment, ignore_errors, dbenv="google_firestore"):
 
 if __name__ == '__main__':
     '''For (local) testing'''
-    import_data_gouv_fr("prod", True, "python_json")
+    dbenv = parse_args_common()
+    import_data_gouv_fr("prod", True, dbenv)

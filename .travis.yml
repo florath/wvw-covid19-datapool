@@ -4,9 +4,8 @@ python:
   - 3.6
   - 3.7
   - 3.8
-install:
-  - pip install -U pylint
 script:
-  - pylint dbsync
-  - pylint dbquery
-  - pylint examples/pandas
+  - cd dbsync
+  - tox
+  - cd ../dbquery
+  - tox

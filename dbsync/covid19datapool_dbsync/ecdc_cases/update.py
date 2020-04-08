@@ -13,6 +13,7 @@ import requests
 import importlib
 
 from lib.data_import import DataCollectionImporter
+from lib.parse_args import parse_args_common
 
 
 DOWNLOAD_URL = "https://opendata.ecdc.europa.eu/covid19/casedistribution/json"
@@ -73,4 +74,5 @@ def update_data_ecdc_cases(environment, ignore_errors, dbenv="google_firestore")
 
 if __name__ == '__main__':
     # For (local) testing: only update the data
-    update_data_ecdc_cases("prod", False, "python_json")
+    dbenv = parse_args_common()
+    update_data_ecdc_cases("prod", False, dbenv)

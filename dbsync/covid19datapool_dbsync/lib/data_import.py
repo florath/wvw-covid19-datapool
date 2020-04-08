@@ -69,5 +69,5 @@ class DataCollectionImporter:
               % (self.__name, len(self.__to_be_deleted_ids)))
         for tbd in self.__to_be_deleted_ids:
             print("[%s] Deleting document [%s]" % (self.__name, tbd))
-            self.__tab_ref.document(tbd).delete()
+            self.__dbclient.remove(tbd)
         print("[%s] remove_old_data finished" % self.__name)

@@ -13,6 +13,7 @@ import tempfile
 import importlib
 
 from lib.data_import import DataCollectionImporter
+from lib.parse_args import parse_args_common
 
 
 GIT_REPO_URL = "https://github.com/CSSEGISandData/COVID-19.git"
@@ -226,4 +227,5 @@ def import_data_johns_hopkins_github(environment, ignore_errors,
 
 if __name__ == '__main__':
     '''For (local) testing: only update the data'''
-    update_data("/tmp/jh-covid-19", "prod", "python_json")
+    dbenv = parse_args_common()
+    update_data("/tmp/jh-covid-19", "prod", dbenv)

@@ -10,6 +10,7 @@ import re
 import importlib
 
 from lib.data_import import DataCollectionImporter
+from lib.parse_args import parse_args_common
 
 
 # Need to prepare this - as there is no funtion to
@@ -175,4 +176,5 @@ def update_data_rki_cases(environment, ignore_errors,
 
 if __name__ == '__main__':
     '''For (local) testing: only update the data'''
-    update_data_rki_cases("prod", True, 'python_json')
+    dbenv = parse_args_common()
+    update_data_rki_cases("prod", True, dbenv)
