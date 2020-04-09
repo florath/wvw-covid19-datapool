@@ -296,7 +296,7 @@ def update_data(datapool, environment, dbenv):
           % (data[0], environment))
 
 
-def import_data_gouv_fr(environment, ignore_errors, dbenv="google_firestore"):
+def update_dataset(environment, ignore_errors, dbenv="google_firestore"):
     print("import_data_gouv_fr called [%s] [%s]" %
           (environment, ignore_errors))
     datalist = download_master_html()
@@ -308,4 +308,4 @@ def import_data_gouv_fr(environment, ignore_errors, dbenv="google_firestore"):
 if __name__ == '__main__':
     '''For (local) testing'''
     dbenv = parse_args_common()
-    import_data_gouv_fr("prod", True, dbenv)
+    update_dataset("prod", True, dbenv)

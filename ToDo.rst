@@ -1,6 +1,9 @@
 Cleanup and Basics
 ++++++++++++++++++
 
+* rki_update: can be implemented in the way that just
+  the new are added - need some rework when reconciallation
+
 * Transaction check:
   is updarte running?
 

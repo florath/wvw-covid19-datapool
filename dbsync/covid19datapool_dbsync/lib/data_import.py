@@ -12,7 +12,11 @@ import sys
 
 
 class DataCollectionImporter:
+    '''Imports a data collection
 
+    This class can handle arbritrary inputs: they just need to
+    be iterable.
+    '''
     def __init__(self, dbclient, name):
         self.__dbclient = dbclient
         self.__name = name
@@ -35,9 +39,9 @@ class DataCollectionImporter:
                     print("[%s] Handled [%d] entries" %
                           (self.__name, line_cnt))
                 data_hashv_list = handle_one_data_line_cb(line)
-                for ds in data_hashv_list:
-                    data = ds[0]
-                    hashv = hashlib.sha256(ds[1].encode("utf-8")).hexdigest()
+                for dhv in data_hashv_list:
+                    data = dhv[0]
+                    hashv = hashlib.sha256(dhv[1].encode("utf-8")).hexdigest()
                     # If there is no need to process any further
                     # (e.g. errornous line), a None is returned.
                     if data is None:
@@ -59,6 +63,9 @@ class DataCollectionImporter:
                     print("[%s] Adding document [%s]" % (self.__name, hashv))
                     self.__dbclient.insert(hashv, data)
 
+            # There are *many* possible problems - because on the invalid data
+            # or the input source.
+            # pylint: disable=broad-except
             except Exception as ex:
                 print("ERROR: line cannot be handled [%s]: [%s]" % (ex, line))
                 traceback.print_exc(file=sys.stdout)

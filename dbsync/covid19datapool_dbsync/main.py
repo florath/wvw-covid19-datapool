@@ -5,13 +5,9 @@ Main file for dbsync / dbimport
 
 import json
 import os
+import importlib
 from flask import Flask, request
 from google.cloud import tasks_v2
-
-from gouv_fr.update import import_data_gouv_fr
-from johns_hopkins_github.update import import_data_johns_hopkins_github
-from ecdc_cases.update import update_data_ecdc_cases
-from rki_cases.update import update_data_rki_cases
 
 
 # This is the way it is documented
@@ -67,6 +63,17 @@ def import_data_trigger(source):
     return "import_data_trigger ok", 200
 
 
+def get_available_import_modules():
+    '''Return a list of the available import modules'''
+    amodules = []
+    for fname in os.listdir():
+        if os.path.isdir(fname):
+            upath = os.path.join(fname, "update.py")
+            if os.path.isfile(upath):
+                amodules.append(fname)
+    return amodules
+
+
 @app.route('/v1/task/import_data', methods=['POST', ])
 def import_data():
     '''The real import function'''
@@ -74,21 +81,16 @@ def import_data():
     print("import_data called with parameters [%s]" % jdata)
 
     source = jdata['source']
-    # ToDo: this should be a module and loaded during runtime
-    if source == 'johns_hopkins_github':
-        import_data_johns_hopkins_github(
-            jdata['environment'], jdata['ignore-errors'])
-    elif source == 'ecdc_cases':
-        update_data_ecdc_cases(
-            jdata['environment'], jdata['ignore-errors'])
-    elif source == 'gouv_fr':
-        import_data_gouv_fr(
-            jdata['environment'], jdata['ignore-errors'])
-    elif source == 'rki_cases':
-        update_data_rki_cases(
-            jdata['environment'], jdata['ignore-errors'])
-    else:
+
+    amodules = get_available_import_modules()
+
+    if source not in amodules:
         print("*** ERROR: unknown source [%s]" % source)
+        return "Unknown source", 421
+
+    import_module = importlib.import_module("%s.update" % source)
+    import_module.update_dataset(
+        jdata['environment'], jdata['ignore-errors'])
 
     print("import_data finished for [%s]" % source)
     return "import_data ok", 200
@@ -100,5 +102,13 @@ def main():
     return 'Hello, World!'
 
 
+def main_test():
+    '''Test function called when main is called'''
+    amodules = get_available_import_modules()
+    for module in amodules:
+        import_module = importlib.import_module("%s.update" % module)
+        print(import_module.update_dataset)
+
+
 if __name__ == '__main__':
-    main()
+    main_test()

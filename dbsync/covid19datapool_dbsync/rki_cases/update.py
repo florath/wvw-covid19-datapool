@@ -3,11 +3,11 @@ Updates / Imports the data from RKI
 '''
 
 import datetime
-import requests
-import json
-import pycountry
-import re
 import importlib
+import json
+import re
+import requests
+import pycountry
 
 from lib.data_import import DataCollectionImporter
 from lib.parse_args import parse_args_common
@@ -64,12 +64,13 @@ def handle_obj_cb(jobj):
     else:
         # This line gives a false positive:
         #  W605 invalid escape sequence '\d'
+        # pylint: disable=anomalous-backslash-in-string
         age_pat = re.compile('A(\d*)\-A(\d*)')  # noqa: W605
         age_match = age_pat.search(data['Altersgruppe'])
         age_lower = int(age_match.group(1))
         age_upper = int(age_match.group(2))
 
-    nd = {
+    new_data = {
         'timestamp': data['Meldedatum'] / 1000.0,  # given in ms
         'infected': data['AnzahlFall'],
         'deaths': data['AnzahlTodesfall'],
@@ -84,13 +85,13 @@ def handle_obj_cb(jobj):
     }
 
     if age_lower is not None:
-        nd['age-lower'] = age_lower
+        new_data['age-lower'] = age_lower
 
     if age_upper is not None:
-        nd['age-upper'] = age_upper
+        new_data['age-upper'] = age_upper
 
     if sex is not None:
-        nd['sex'] = sex
+        new_data['sex'] = sex
 
     # JSON cannot be directly used - because of the JSON is
     # not ordered.
@@ -100,7 +101,7 @@ def handle_obj_cb(jobj):
         + str(data['IdBundesland']) + str(data['Landkreis']) \
         + str(data['ObjectId']) + str(data['IdLandkreis'])
 
-    return [(nd, sha_str), ]
+    return [(new_data, sha_str), ]
 
 
 DLURL = "https://services7.arcgis.com/mOBPykOjAyBO2ZKk/" \
@@ -135,8 +136,8 @@ def generator_rki_data(last_updated):
 
         jdata = json.loads(resp.content)
 
-        for ds in jdata['features']:
-            yield ds
+        for data_set in jdata['features']:
+            yield data_set
 
         cur_day += datetime.timedelta(days=1)
         if cur_day >= end_day:
@@ -150,8 +151,9 @@ def update_data(dbclient, last_updated):
     dci.remove_old_data()
 
 
-def update_data_rki_cases(environment, ignore_errors,
-                          dbenv="google_firestore"):
+def update_dataset(environment, ignore_errors,
+                   dbenv="google_firestore"):
+    '''Update the RKI dataset'''
     print("update_data_rki_cases called [%s] [%s]" %
           (environment, ignore_errors))
 
@@ -160,16 +162,8 @@ def update_data_rki_cases(environment, ignore_errors,
     dbmod = importlib.import_module("lib.db.%s" % dbenv)
     dbclient = dbmod.DBClient("rki_cases", environment)
 
-    # Not needed - see below
-    # metadata_from_db = get_metadata_from_db(db, environment, "rki_cases")
-
     # date --date 2020-01-01 "+%s"
     last_updated = 1577833200
-    # last_updated = 1585951200
-    # ToDo: this needs rework as it currently deleted
-    #       all the old data!
-    # if metadata_from_db is not None and 'last_updated' in metadata_from_db:
-    #    last_updated = metadata_from_db['last_updated']
     print("INFO: last updated [%d]" % last_updated)
 
     update_data(dbclient, last_updated)
@@ -179,7 +173,13 @@ def update_data_rki_cases(environment, ignore_errors,
     dbclient.sync()
 
 
-if __name__ == '__main__':
-    '''For (local) testing: only update the data'''
+def main_test():
+    '''Test function called when main is called
+
+    For (local) testing: only update the data'''
     dbenv = parse_args_common()
-    update_data_rki_cases("prod", True, dbenv)
+    update_dataset("prod", True, dbenv)
+
+
+if __name__ == '__main__':
+    main_test()

@@ -60,8 +60,8 @@ def update_data(environment, jdata, db_env):
     dbclient.sync()
 
 
-def update_data_ecdc_cases(environment, ignore_errors,
-                           db_env="google_firestore"):
+def update_dataset(environment, ignore_errors,
+                   db_env="google_firestore"):
     '''Main function to update all ecdc cases'''
     print("update_data_ecdc_cases called [%s] [%s]" %
           (environment, ignore_errors))
@@ -78,4 +78,4 @@ if __name__ == '__main__':
     # (The problem pylint reports does obviously not exists???)
     # pylint: disable=invalid-name
     dbenv = parse_args_common()
-    update_data_ecdc_cases("prod", False, dbenv)
+    update_dataset("prod", False, dbenv)

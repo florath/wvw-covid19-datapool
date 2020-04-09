@@ -6,6 +6,7 @@ import argparse
 
 
 def parse_args_common():
+    '''Parse common command line arguments'''
     parser = argparse.ArgumentParser(description='common args.')
     parser.add_argument('--dbenv', type=str, required=True,
                         help='Name of the database backend; '

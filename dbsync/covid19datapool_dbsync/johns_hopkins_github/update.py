@@ -202,12 +202,10 @@ def update_data(tmp_dir, environment, dbenv):
     print("update_data finished [%s]" % tmp_dir)
 
 
-def import_data_johns_hopkins_github(environment, ignore_errors,
-                                     dbenv="google_firestore"):
+def update_dataset(environment, ignore_errors,
+                   dbenv="google_firestore"):
     print("import_data_johns_hopkins_github called [%s] [%s]" %
           (environment, ignore_errors))
-    print("import_data_johns_hopkins_github start pre-process checks")
-    print("import_data_johns_hopkins_github finished pre-process checks")
     try:
         tmp_dir = tempfile.mkdtemp(prefix="johns-hopkins-github", dir="/tmp")
         print("import_data_johns_hopkins_github start [%s]" % tmp_dir)
@@ -220,8 +218,7 @@ def import_data_johns_hopkins_github(environment, ignore_errors,
         shutil.rmtree(tmp_dir, ignore_errors=True)
 
     # Check for remaining files in /tmp
-    print("import_data_johns_hopkins_github cleanup check started")
-    print("import_data_johns_hopkins_github cleanup check finished")
+    print("import_data_johns_hopkins_github finished")
 
 
 if __name__ == '__main__':
