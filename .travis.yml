@@ -7,7 +7,7 @@ python:
 install:
   - pip install -U tox
 script:
-  - cd dbsync
+  - cd covid19datapool_dbsync
   - tox
-  - cd ../dbquery
-  - tox
+#  - cd ../dbquery
+#  - tox
