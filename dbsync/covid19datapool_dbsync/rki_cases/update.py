@@ -62,13 +62,15 @@ def handle_obj_cb(jobj):
         age_lower = 80
         age_upper = None
     else:
-        age_pat = re.compile("A(\d*)\-A(\d*)")
+        # This line gives a false positive:
+        #  W605 invalid escape sequence '\d'
+        age_pat = re.compile('A(\d*)\-A(\d*)')  # noqa: W605
         age_match = age_pat.search(data['Altersgruppe'])
         age_lower = int(age_match.group(1))
         age_upper = int(age_match.group(2))
 
     nd = {
-        'timestamp': data['Meldedatum'] / 1000.0, # given in ms
+        'timestamp': data['Meldedatum'] / 1000.0,  # given in ms
         'infected': data['AnzahlFall'],
         'deaths': data['AnzahlTodesfall'],
         'iso-3166-1': 'DE',
@@ -101,7 +103,10 @@ def handle_obj_cb(jobj):
     return [(nd, sha_str), ]
 
 
-DLURL = "https://services7.arcgis.com/mOBPykOjAyBO2ZKk/arcgis/rest/services/RKI_COVID19/FeatureServer/0/query?where=Meldedatum%3D%27{dldate}%27&outFields=*&f=json"
+DLURL = "https://services7.arcgis.com/mOBPykOjAyBO2ZKk/" \
+    "arcgis/rest/services/RKI_COVID19/FeatureServer/0/" \
+    "query?where=Meldedatum%3D%27{dldate}%27&outFields=*&f=json"
+
 
 def generator_rki_data(last_updated):
     '''Generator which returns the data piece by piece
@@ -160,10 +165,10 @@ def update_data_rki_cases(environment, ignore_errors,
 
     # date --date 2020-01-01 "+%s"
     last_updated = 1577833200
-    #last_updated = 1585951200
+    # last_updated = 1585951200
     # ToDo: this needs rework as it currently deleted
     #       all the old data!
-    #if metadata_from_db is not None and 'last_updated' in metadata_from_db:
+    # if metadata_from_db is not None and 'last_updated' in metadata_from_db:
     #    last_updated = metadata_from_db['last_updated']
     print("INFO: last updated [%d]" % last_updated)
 
