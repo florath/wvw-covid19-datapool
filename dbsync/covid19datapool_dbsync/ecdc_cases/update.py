@@ -48,9 +48,9 @@ def handle_one_data_line(line):
     return [(new_data, sha_str), ]
 
 
-def update_data(environment, jdata, dbenv):
+def update_data(environment, jdata, db_env):
     '''Update the data in the database'''
-    dbmod = importlib.import_module("lib.db.%s" % dbenv)
+    dbmod = importlib.import_module("lib.db.%s" % db_env)
     dbclient = dbmod.DBClient("ecdc_cases", environment)
 
     dci = DataCollectionImporter(dbclient, "ecdc_cases")
@@ -61,7 +61,7 @@ def update_data(environment, jdata, dbenv):
 
 
 def update_data_ecdc_cases(environment, ignore_errors,
-                           dbenv="google_firestore"):
+                           db_env="google_firestore"):
     '''Main function to update all ecdc cases'''
     print("update_data_ecdc_cases called [%s] [%s]" %
           (environment, ignore_errors))
@@ -69,11 +69,13 @@ def update_data_ecdc_cases(environment, ignore_errors,
     if jdata is None:
         print("ERROR: cannot download data")
         return
-    update_data(environment, jdata['records'], dbenv)
+    update_data(environment, jdata['records'], db_env)
     print("update_data_ecdc_cases finished")
 
 
 if __name__ == '__main__':
     # For (local) testing: only update the data
+    # (The problem pylint reports does obviously not exists???)
+    # pylint: disable=invalid-name
     dbenv = parse_args_common()
     update_data_ecdc_cases("prod", False, dbenv)
