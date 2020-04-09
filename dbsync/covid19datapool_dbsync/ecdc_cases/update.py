@@ -8,9 +8,9 @@ xml under a fixed URL.
 '''
 
 import datetime
+import importlib
 import json
 import requests
-import importlib
 
 from lib.data_import import DataCollectionImporter
 from lib.parse_args import parse_args_common
@@ -60,7 +60,8 @@ def update_data(environment, jdata, dbenv):
     dbclient.sync()
 
 
-def update_data_ecdc_cases(environment, ignore_errors, dbenv="google_firestore"):
+def update_data_ecdc_cases(environment, ignore_errors,
+                           dbenv="google_firestore"):
     '''Main function to update all ecdc cases'''
     print("update_data_ecdc_cases called [%s] [%s]" %
           (environment, ignore_errors))

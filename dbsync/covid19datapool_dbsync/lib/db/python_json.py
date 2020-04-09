@@ -5,6 +5,7 @@ Database backend using a simple python json implementation
 import os
 import json
 
+
 class DBClient:
 
     def __init__(self, name, environment,

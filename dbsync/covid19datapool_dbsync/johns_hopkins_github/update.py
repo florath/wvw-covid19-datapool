@@ -8,7 +8,6 @@ import dateutil.parser
 import git
 import os
 import shutil
-import hashlib
 import tempfile
 import importlib
 
@@ -164,7 +163,7 @@ def handle_one_data_file(tab_ref, dci, fname):
         content = csv.reader(csvfile, delimiter=',', quotechar='"')
         header = next(content)
         hod_cb = get_callback_based_on_header(header)
-        if hod_cb == None:
+        if hod_cb is None:
             print("No callback available for the data file [%s] - skipping"
                   % fname)
             return
@@ -178,7 +177,7 @@ def update_git(tmp_dir):
     Later on this can be changed in (just) updating a possible existing one.
     '''
     print("update_git called [%s]" % tmp_dir)
-    repo = git.Repo.clone_from(GIT_REPO_URL, tmp_dir, depth=1)
+    git.Repo.clone_from(GIT_REPO_URL, tmp_dir, depth=1)
     print("update_git finished [%s]" % tmp_dir)
 
 

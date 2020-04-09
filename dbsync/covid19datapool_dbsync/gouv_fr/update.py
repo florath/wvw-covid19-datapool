@@ -6,7 +6,6 @@ import csv
 import io
 import requests
 import json
-import hashlib
 import re
 from html.parser import HTMLParser
 import dateutil.parser
@@ -28,12 +27,12 @@ class GouvFrHTMLParser(HTMLParser):
         self.__script = None
 
     def handle_starttag(self, tag, attrs):
-        #print("Encountered a start tag:", tag)
-        if tag == 'script' and self.__script == None:
+        # print("Encountered a start tag:", tag)
+        if tag == 'script' and self.__script is None:
             self.__script_tag_found = True
 
     def handle_endtag(self, tag):
-        #print("Encountered an end tag :", tag)
+        # print("Encountered an end tag :", tag)
         if tag == 'script':
             self.__script_tag_found = False
 
@@ -59,6 +58,7 @@ age_group_upper = {
     'C': 64,
     'D': 74
 }
+
 
 # erv - emergency room visits
 # cs - covid19 suspicious
@@ -167,9 +167,6 @@ def handle_gouv_fr_departement_emergency_room_visits(line):
 
     return res
 
-def not_implemented():
-    assert False
-
 
 # These are the data which are needed for handling the different
 # files.
@@ -178,45 +175,42 @@ def not_implemented():
 # 1: a regular expression which matches the data file name
 # 2: the callback which handles the data
 DATA_MAPPING = [
-    [ 'gouv_fr_covid19_emergency_room_visits',
-      re.compile('sursaud-covid19-quotidien.*-departement.csv'),
-      handle_gouv_fr_departement_emergency_room_visits],
-    [ 'gouv_fr_covid19_daily_region',
-      re.compile('sursaud-covid19-quotidien.*-region.csv'),
-      # TODO!
-      None],
-    [ 'gouv_fr_covid19_daily_departement',
-      re.compile('sursaud-covid19-quotidien.*-france.csv'),
-      # TODO!
-      None],
-    [ 'gouv_fr_covid19_weekly',
-      re.compile('sursaud-covid19-hebdomadaire.*'),
-      # TODO!
-      None],
+    ['gouv_fr_covid19_emergency_room_visits',
+     re.compile('sursaud-covid19-quotidien.*-departement.csv'),
+     handle_gouv_fr_departement_emergency_room_visits],
+    ['gouv_fr_covid19_daily_region',
+     re.compile('sursaud-covid19-quotidien.*-region.csv'),
+     None],
+    ['gouv_fr_covid19_daily_departement',
+     re.compile('sursaud-covid19-quotidien.*-france.csv'),
+     None],
+    ['gouv_fr_covid19_weekly',
+     re.compile('sursaud-covid19-hebdomadaire.*'),
+     None],
     # The following is the description (metadata) of the
     # data itself. This is not statistical data and
     # implemented into the source code (used for mapping).
-    [ None,
-      re.compile('metadonnees-donnees-hospitalieres-covid19.*'),
-      None ],
-    [ None,
-      re.compile('metadonnees-services-hospitaliers-covid19.csv'),
-      None ],
-    [ None,
-      re.compile('metadonnee-urgenceshos-sosmedecins-covid19-quot-dep.csv'),
-      None ],
-    [ None,
-      re.compile('metadonnee-urgenceshos-sosmedecin-covid19-quot-reg.csv'),
-      None ],
-    [ None,
-      re.compile('metadonnee-urgenceshos-sosmedecin-covid19-quot-fra.csv'),
-      None ],
-    [ None,
-      re.compile('metadonnee-urgenceshos-sosmedecins-covid19-hebdo.csv'),
-      None ],
-    [ None,
-      re.compile('code-tranches-dage.csv'),
-      None ],
+    [None,
+     re.compile('metadonnees-donnees-hospitalieres-covid19.*'),
+     None],
+    [None,
+     re.compile('metadonnees-services-hospitaliers-covid19.csv'),
+     None],
+    [None,
+     re.compile('metadonnee-urgenceshos-sosmedecins-covid19-quot-dep.csv'),
+     None],
+    [None,
+     re.compile('metadonnee-urgenceshos-sosmedecin-covid19-quot-reg.csv'),
+     None],
+    [None,
+     re.compile('metadonnee-urgenceshos-sosmedecin-covid19-quot-fra.csv'),
+     None],
+    [None,
+     re.compile('metadonnee-urgenceshos-sosmedecins-covid19-hebdo.csv'),
+     None],
+    [None,
+     re.compile('code-tranches-dage.csv'),
+     None],
 ]
 
 
@@ -271,7 +265,7 @@ def update_data(datapool, environment, dbenv):
           (data[0], environment))
 
     # TODO: Remove!
-    if data[2] == None:
+    if data[2] is None:
         print("ERROR: Not implemented data set hander")
         return
 
@@ -297,7 +291,7 @@ def update_data(datapool, environment, dbenv):
     # For each table, insert the metadata
     dbclient.update_metadata("gouv_fr/metadata.json")
     dbclient.sync()
- 
+
     print("Finished updating data [%s] environment [%s]"
           % (data[0], environment))
 
