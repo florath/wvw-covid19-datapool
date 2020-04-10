@@ -32,6 +32,7 @@ class DataCollectionImporter:
         '''
         # For logging only
         line_cnt = 0
+        add_cnt = 0
         for line in collection:
             try:
                 line_cnt += 1
@@ -60,7 +61,9 @@ class DataCollectionImporter:
                     if self.__dbclient.exists(hashv):
                         # Document (entry) already exists
                         continue
-                    print("[%s] Adding document [%s]" % (self.__name, hashv))
+                    add_cnt += 1
+                    if add_cnt % 500 == 0:
+                        print("[%s] Adding document [%s]" % (self.__name, hashv))
                     self.__dbclient.insert(hashv, data)
 
             # There are *many* possible problems - because on the invalid data
@@ -74,7 +77,10 @@ class DataCollectionImporter:
         '''Remove possible old data'''
         print("[%s] remove_old_data called; count [%d]"
               % (self.__name, len(self.__to_be_deleted_ids)))
+        del_cnt = 0
         for tbd in self.__to_be_deleted_ids:
-            print("[%s] Deleting document [%s]" % (self.__name, tbd))
+            del_cnt += 1
+            if del_cnt % 500 == 0:
+                print("[%s] Deleting document [%s]" % (self.__name, tbd))
             self.__dbclient.remove(tbd)
         print("[%s] remove_old_data finished" % self.__name)
