@@ -287,6 +287,9 @@ The format of the data changes from time to time. Also the detailes
 and location details.  The latest data includes very detailed
 information about the US.
 
+Please note that the original dataset contains some data more than once.
+This is filtered out - and only one instance of a data row is provided.
+
 * ID: :code:`johns_hopkins_github`
 * JSON meta data: `metadata-johns_hopkins_github.json`_
 * Area: world
