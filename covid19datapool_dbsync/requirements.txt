@@ -7,3 +7,4 @@ gunicorn==20.0.4
 openpyxl
 python-dateutil
 pycountry
+psycopg2-binary

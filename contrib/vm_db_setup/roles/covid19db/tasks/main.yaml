@@ -1,0 +1,12 @@
+---
+
+# ToDo: fail2ban
+
+- name: "Update repositories cache"
+  apt:
+    update_cache: yes
+
+- include: user.yaml
+- include: repo_prepare.yaml
+- include: virtualenv.yaml
+- include: postgres.yaml

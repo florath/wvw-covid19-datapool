@@ -1,0 +1,13 @@
+---
+
+- name: "Create group covid19grp"
+  group:
+    name: covid19grp
+    state: present
+
+- name: "Create user covid19usr"
+  user:
+    name: covid19usr
+    comment: "COVID-19 Datapool user"
+    group: covid19grp
+    shell: /usr/sbin/nologin
