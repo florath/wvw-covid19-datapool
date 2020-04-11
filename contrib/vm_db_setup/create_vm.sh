@@ -16,6 +16,9 @@ function cleanup() {
 
 #gcloud compute --project=covid19datapool firewall-rules create default-allow-http --direction=INGRESS --priority=1000 --network=default --action=ALLOW --rules=tcp:80 --source-ranges=0.0.0.0/0 --target-tags=http-server
 
+# ???
+#gcloud compute --project=covid19datapool firewall-rules create allow-psql --direction=INGRESS --priority=1000 --network=default --action=ALLOW --rules=tcp:5432 --source-ranges=0.0.0.0/0 --target-tags=postgresql-server
+
 IP_ADDR=$(jq -r '.[0].networkInterfaces[0].accessConfigs[0].natIP' ${WORK_DIR}/vm-info.json)
 
 cat >hosts.yaml <<EOF
@@ -25,3 +28,6 @@ all:
     covid19dp:
       ansible_host: ${IP_ADDR}
 EOF
+
+# Create connector
+# https://cloud.google.com/appengine/docs/standard/python3/connecting-vpc

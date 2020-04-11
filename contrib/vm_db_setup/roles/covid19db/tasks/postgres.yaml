@@ -91,11 +91,18 @@
   postgresql_pg_hba:
     state: present
     dest: /etc/postgresql/11/main/pg_hba.conf
-    contype: hostssl
+    contype: host
     databases: covid19dp
     users: covid19ro
-    address: all
+    address: "10.8.0.0/28"
     method: md5
+
+- name: "Listen also on the internal network"
+  become: true
+  become_user: postgres
+  postgresql_set:
+    name: listen_addresses
+    value: "0.0.0.0"
 
 - name: "Set environment for covid19usr"
   copy:
