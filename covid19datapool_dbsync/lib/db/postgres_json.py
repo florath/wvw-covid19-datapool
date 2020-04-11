@@ -8,10 +8,6 @@ import json
 import sys
 
 
-DATA_TABLE = "cases"
-METADATA_TABLE = "metadata"
-
-
 class DBClient:
 
     def __init__(self, name, environment):
@@ -24,7 +20,7 @@ class DBClient:
         cur = self.__connection.cursor()
         cur.execute("select * from information_schema.tables "
                     "where table_name=%s",
-                    (DATA_TABLE,))
+                    ('cases',))
         if not bool(cur.rowcount):
             print("ERROR: required tabled does not exitst")
             sys.exit(1)
@@ -36,8 +32,8 @@ class DBClient:
     def get_available_data_ids(self):
         ids = set()
         cur = self.__connection.cursor()
-        cur.execute("select id from %s where source = %s",
-                    (DATA_TABLE, self.__name,))
+        cur.execute("select id from cases where source = %s",
+                    (self.__name,))
         records = cur.fetchall()
         for id in records:
             ids.add(id[0])
@@ -45,20 +41,20 @@ class DBClient:
 
     def exists(self, hashv):
         self.__exists_cur.execute(
-            "select id from %s where source = %s and id = %s",
-            (DATA_TABLE, self.__name, hashv, ))
+            "select id from cases where source = %s and id = %s",
+            (self.__name, hashv, ))
         # print("RC", self.__exists_cur.rowcount)
         return self.__exists_cur.rowcount > 0
         
     def insert(self, hashv, value):
         self.__cur.execute(
-            "insert into %s(id, source, jdata) values (%s, %s, %s)",
-            (DATA_TABLE, hashv, self.__name, json.dumps(value)))
+            "insert into cases(id, source, jdata) values (%s, %s, %s)",
+            (hashv, self.__name, json.dumps(value)))
 
     def remove(self, hashv):
         self.__cur.execute(
-            "delete from %s where id = %s",
-            (DATA_TABLE, hashv, ))
+            "delete from cases where id = %s",
+            (hashv, ))
 
     def update_metadata(self, mdpath):
         print("TODO!!!!")

@@ -2,6 +2,8 @@
 #
 # Update the COVID19 datapool postgres database
 #
+import os
+import importlib
 from lib.parse_args import parse_args_main_postgresql
 
 
