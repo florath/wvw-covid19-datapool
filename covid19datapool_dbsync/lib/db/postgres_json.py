@@ -2,6 +2,7 @@
 Database backend using postgres and jsonb
 '''
 
+import os
 import psycopg2
 import json
 
@@ -20,8 +21,9 @@ class DBClient:
         self.__name = name
         self.__environment = environment
 
+        pwd = os.getenv("COVID19DP_PASSWORD")
         self.__connection = psycopg2.connect(
-            user="florath", database="jsontst")
+            user="covid19usr", database="covid19dp", password=pwd)
         cur = self.__connection.cursor()
         cur.execute("select * from information_schema.tables "
                     "where table_name=%s",
