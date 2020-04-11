@@ -45,7 +45,7 @@
   postgresql_user:
     db: "covid19dp"
     name: "covid19usr"
-    priv: "cases:SELECT,INSERT,DELETE/metadata:SELECT,INSERT,DELETE"
+    priv: "cases:SELECT,INSERT,DELETE/metadata:SELECT,INSERT,DELETE,UPDATE"
     role_attr_flags: "NOSUPERUSER,NOCREATEROLE,NOCREATEDB,NOINHERIT,NOREPLICATION,NOBYPASSRLS"
     password: "{{ lookup('password', 'password_postgresql_covid19usr.txt length=20') }}"
     # ToDo: use SSL Certificates
