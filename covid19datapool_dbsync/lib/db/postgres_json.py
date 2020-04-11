@@ -2,6 +2,7 @@
 Database backend using postgres and jsonb
 '''
 
+import datetime
 import os
 import psycopg2
 import json
@@ -60,9 +61,10 @@ class DBClient:
         with open(mdpath, "r") as filedesc:
             jdata = json.load(filedesc)
             jdata['last_updated'] = datetime.datetime.now().timestamp()
+        jdata = json.dumps(jdata)
         mdcur = self.__connection.cursor()
         mdcur.execute("INSERT INTO metadata(source, jmetadata) values (%s, %s) "
-                      "ON CONFLICT ON CONTRAINT source "
+                      "ON CONFLICT ON CONSTRAINT metadata_pkey "
                       "DO UPDATE SET jmetadata = %s",
                       (self.__name, jdata, jdata))
         mdcur.close()
