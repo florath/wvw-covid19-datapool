@@ -1,0 +1,19 @@
+---
+
+# Set up the systemd time and services
+
+- name: "Setup service file"
+  template:
+    src: covid19-update.service
+    dest: /etc/systemd/system/covid19-update.service
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: "Setup timer file"
+  template:
+    src: covid19-update.timer
+    dest: /etc/systemd/system/covid19-update.timer
+    owner: root
+    group: root
+    mode: '0644'

@@ -18,15 +18,25 @@
   postgresql_db:
     name: covid19dp
 
-- name: "Create covid19tab"
+- name: "Create database table: metadata"
   become: true
   become_user: postgres
   postgresql_table:
     db: covid19dp
-    name: covid19tab
+    name: metadata
+    columns:
+      - "source text not null primary key"
+      - "jmetadata jsonb not null"
+
+- name: "Create database table: cases"
+  become: true
+  become_user: postgres
+  postgresql_table:
+    db: covid19dp
+    name: cases
     columns:
       - "id char(64) primary key"
-      - "source text not null"
+      - "source text not null references metadata(source)"
       - "jdata jsonb not null"
 
 - name: "Create DB user: covid19usr"

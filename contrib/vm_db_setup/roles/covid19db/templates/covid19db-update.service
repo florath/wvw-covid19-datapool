@@ -1,0 +1,13 @@
+[Unit]
+Description=Update COVID19 Datapool database timer
+
+[Service]
+Type=simple
+EnvironmentFile=/home/covid19usr/environment
+ExecStart=/opt/covid19dp/wvv-covid19-datapool/covid19datapool_dbsync/covid19db-update.sh
+User=covid19usr
+Group=covid19grp
+WorkingDirectory=/home/covid19usr
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true

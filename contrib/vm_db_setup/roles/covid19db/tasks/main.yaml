@@ -10,3 +10,4 @@
 - include: repo_prepare.yaml
 - include: virtualenv.yaml
 - include: postgres.yaml
+- include: systemd-timer.yaml
