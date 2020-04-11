@@ -188,6 +188,7 @@ def update_data(tmp_dir, environment, dbenv):
     print("update_data creating connection to Firestore")
     dbmod = importlib.import_module("lib.db.%s" % dbenv)
     dbclient = dbmod.DBClient("johns_hopkins_github", environment)
+    dbclient.update_metadata("johns_hopkins_github/metadata.json")
 
     print("update_data handle files")
     dci = DataCollectionImporter(dbclient, "johns_hopkins_github")
@@ -197,7 +198,6 @@ def update_data(tmp_dir, environment, dbenv):
             handle_one_data_file(dbclient, dci,
                                  os.path.join(tmp_dir, DATA_DIR, fname))
     dci.remove_old_data()
-    dbclient.update_metadata("johns_hopkins_github/metadata.json")
     dbclient.sync()
     print("update_data finished [%s]" % tmp_dir)
 

@@ -161,13 +161,13 @@ def update_dataset(environment, ignore_errors,
           % dbenv)
     dbmod = importlib.import_module("lib.db.%s" % dbenv)
     dbclient = dbmod.DBClient("rki_cases", environment)
+    dbclient.update_metadata("rki_cases/metadata.json")
 
     # date --date 2020-01-01 "+%s"
     last_updated = 1577833200
     print("INFO: last updated [%d]" % last_updated)
 
     update_data(dbclient, last_updated)
-    dbclient.update_metadata("rki_cases/metadata.json")
     print("update_data_rki_cases finished [%s] [%s]" %
           (environment, ignore_errors))
     dbclient.sync()

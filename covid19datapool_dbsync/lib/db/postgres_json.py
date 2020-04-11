@@ -57,7 +57,16 @@ class DBClient:
             (hashv, ))
 
     def update_metadata(self, mdpath):
-        print("TODO!!!!")
+        with open(mdpath, "r") as filedesc:
+            jdata = json.load(filedesc)
+            jdata['last_updated'] = datetime.datetime.now().timestamp()
+        mdcur = self.__connection.cursor()
+        mdcur.execute("INSERT INTO metadata(source, jmetadata) values (%s, %s) "
+                      "ON CONFLICT ON CONTRAINT source "
+                      "DO UPDATE SET jmetadata = %s",
+                      (self.__name, jdata, jdata))
+        mdcur.close()
+        self.__connection.commit()
 
     def sync(self):
         '''Make data permanent'''

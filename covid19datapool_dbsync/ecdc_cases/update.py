@@ -52,11 +52,11 @@ def update_data(environment, jdata, db_env):
     '''Update the data in the database'''
     dbmod = importlib.import_module("lib.db.%s" % db_env)
     dbclient = dbmod.DBClient("ecdc_cases", environment)
+    dbclient.update_metadata("ecdc_cases/metadata.json")
 
     dci = DataCollectionImporter(dbclient, "ecdc_cases")
     dci.import_data(jdata, handle_one_data_line)
     dci.remove_old_data()
-    dbclient.update_metadata("ecdc_cases/metadata.json")
     dbclient.sync()
 
 

@@ -272,6 +272,7 @@ def update_data(datapool, environment, dbenv):
     dbmod = importlib.import_module("lib.db.%s" % dbenv)
     dbclient = dbmod.DBClient(
         "gouv_fr_covid19_emergency_room_visits", environment)
+    dbclient.update_metadata("gouv_fr/metadata.json")
 
     dci = DataCollectionImporter(
         dbclient, "gouv_fr_covid19_emergency_room_visits")
@@ -289,7 +290,6 @@ def update_data(datapool, environment, dbenv):
     dci.remove_old_data()
 
     # For each table, insert the metadata
-    dbclient.update_metadata("gouv_fr/metadata.json")
     dbclient.sync()
 
     print("Finished updating data [%s] environment [%s]"
