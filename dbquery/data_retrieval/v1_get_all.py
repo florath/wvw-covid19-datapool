@@ -3,7 +3,7 @@ Methods to get complete data sets.
 '''
 
 import json
-from google.cloud import firestore
+import psycopg2
 
 
 def v1_get_all_cases_source(environment, source):
@@ -16,31 +16,48 @@ def v1_get_all_cases_source(environment, source):
         print("Invalid environment [%s]" % environment)
         return '["Invalid environment"]', 422
 
+    print("Retrieving password")
+    with open("password_postgresql_covid19ro.txt") as pwd_fd:
+        pwd = pwd_fd.read()[:-1]
+    print("Password successfully read")
+
+    print("Retrieving PostgreSQL IP address")
+    with open("postgresql_ip_address.txt") as ipa_fd:
+        ip_address = ipa_fd.read()[:-1]
+    print("PostgreSQL IP address is [%s]" % ip_address)
+
+    connection = psycopg2.connect(
+        user="covid19ro", database="covid19dp",
+        password=pwd, host=ip_address)
+
+    print("Retrieving sources")
+    sources = {}
+    cur = connection.cursor()
+    cur.execute("select source, jmetadata from metadata")
+    records = cur.fetchall()
+    for rec in records:
+        sources[rec[0]] = rec[1]
+    print("Sources [%s]" % sources.keys())
+
     # Check if the source really exists
-    if source not in ['johns_hopkins_github', 'ecdc_cases',
-                      'gouv_fr_covid19_emergency_room_visits',
-                      'rki_cases']:
+    if source not in sources.keys():
         print("Invalid source [%s]" % source)
         return '["Invalid source"]', 422
-
-    db = firestore.Client()
-
-    meta_ref = db.document(
-        "covid19datapool/%s/%s/metadata" % (environment, source))
-    metadata = meta_ref.get().to_dict()
 
     def data_generator():
         doc_cnt = 0
         is_first_doc = True
         yield b"["
-        yield json.dumps(metadata).encode()
+        yield json.dumps(sources[source]).encode()
         yield b",["
-        tab_ref = db.collection(
-            "covid19datapool/%s/%s/data/collection" % (environment, source))
-        for doc in tab_ref.stream():
+        print("Execute select jdata")
+        cur.execute("select jdata from cases where source = %s", (source, ))
+        records = cur.fetchall()
+        for doc in records:
+            # print("DOC [%s]" % doc)
             if not is_first_doc:
                 yield ","
-            yield json.dumps(doc.to_dict()).encode()
+            yield json.dumps(doc[0])
             doc_cnt += 1
             is_first_doc = False
         print("v1_get_all_cases_source environment [%s] source [%s] "

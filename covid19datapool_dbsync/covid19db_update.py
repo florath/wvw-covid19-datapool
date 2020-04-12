@@ -1,13 +1,14 @@
 #!/usr/bin/env python
-#
-# Update the COVID19 datapool postgres database
-#
+'''
+Update the COVID19 datapool postgres database
+'''
+
 import os
 import importlib
 from lib.parse_args import parse_args_main_postgresql
 
 
-DBSYNCDIR="/opt/covid19dp/wvv-covid19-datapool/covid19datapool_dbsync"
+DBSYNCDIR = "/opt/covid19dp/wvv-covid19-datapool/covid19datapool_dbsync"
 
 
 def get_available_import_modules():
@@ -22,6 +23,7 @@ def get_available_import_modules():
 
 
 def main():
+    '''Main method to call all updates'''
     dbenv, environment, ignore_errors = parse_args_main_postgresql()
     amodules = get_available_import_modules()
     for module in amodules:

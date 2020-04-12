@@ -8,6 +8,7 @@ from google.cloud import firestore
 
 
 class DBClient:
+    '''DBClient implementation for google firestore backend'''
 
     def __init__(self, name, environment):
         self.__name = name
@@ -59,14 +60,15 @@ class DBClient:
             jdata['last_updated'] = datetime.datetime.now().timestamp()
         meta_ref.set(jdata)
 
+    # pylint: disable=no-self-use
     def sync(self):
         '''Make data permanent'''
-        pass
+        return
 
-    def _OUTDATED_get_metadata_from_db(db, environment, project):
+    def _outdated_get_metadata_from_db(self, environment, project):
         '''Retreive the metadata document from the DB'''
 
-        meta_ref = db.document(
+        meta_ref = self.__db.document(
             "covid19datapool/%s/%s/metadata" % (environment, project))
 
         return meta_ref.get().to_dict()

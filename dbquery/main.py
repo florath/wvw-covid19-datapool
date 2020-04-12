@@ -4,6 +4,8 @@ import datetime
 import time
 import json
 import os
+import psycopg2
+
 from flask import Flask, request, Response
 from data_retrieval.v1_get_all import v1_get_all_cases_source
 
@@ -23,18 +25,6 @@ def lv1_get_all_cases_source(source):
     return response
 
 
-@app.route("/time/")
-def time_url():
-    def streamer():
-        for i in range(100):
-            yield "<p>{}</p>".format(datetime.datetime.now())
-
-    return Response(streamer())
-
-
 @app.route('/')
 def main():
-
-    print("ENVIRONMENT", os.environ)
-    
     return 'Hello, World!'

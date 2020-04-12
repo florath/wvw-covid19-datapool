@@ -5,7 +5,6 @@ This file contains helper and utility functions
 to update the tables
 '''
 
-import copy
 import hashlib
 import traceback
 import sys
@@ -58,7 +57,8 @@ class DataCollectionImporter:
                     # already in the DB first.
                     if self.__dbclient.exists(hashv):
                         # Document (entry) already exists
-                        print("Document [%s] already exists (double document in original dataset!)" % (hashv,))
+                        print("Document [%s] already exists (double "
+                              "document in original dataset!)" % (hashv,))
                         self.__exists_cnt += 1
                         continue
                     self.__add_cnt += 1
@@ -82,7 +82,8 @@ class DataCollectionImporter:
         print("[%s] remove_old_data called; delete count [%d]"
               % (self.__name, len(self.__data_available_ids)))
         print("[%s] remove_old_data called; lines [%d]  added [%d]  data rows [%d]  exists [%d]"
-              % (self.__name, self.__line_cnt, self.__add_cnt, self.__data_row_cnt, self.__exists_cnt))
+              % (self.__name, self.__line_cnt, self.__add_cnt,
+                 self.__data_row_cnt, self.__exists_cnt))
         del_cnt = 0
         for tbd in self.__data_available_ids:
             del_cnt += 1

@@ -7,6 +7,7 @@ import json
 
 
 class DBClient:
+    '''DBClient implementation for python json backend'''
 
     def __init__(self, name, environment,
                  dirname="/tmp/covid19datapool"):
@@ -24,20 +25,24 @@ class DBClient:
             self.__values = {}
 
     def get_available_data_ids(self):
+        '''Return all the ids of the complete dataset'''
         return list(self.__values.keys())
 
     def exists(self, hashv):
+        '''Check if the id (hashv) already exists in the DB'''
         return hashv in self.__values
 
     def insert(self, hashv, value):
+        '''Insert the key / value pair into the DB'''
         self.__values[hashv] = value
 
     def remove(self, hashv):
         '''Remove the entry'''
-        del(self.__values[hashv])
+        del self.__values[hashv]
 
     def update_metadata(self, mdpath):
-        print("TODO!!!!")
+        '''Update the metadata in the DB'''
+        print("TODO!!!!", self, mdpath)
 
     def sync(self):
         '''Make data permanent'''

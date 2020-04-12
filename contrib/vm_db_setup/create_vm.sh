@@ -19,15 +19,22 @@ function cleanup() {
 # ???
 #gcloud compute --project=covid19datapool firewall-rules create allow-psql --direction=INGRESS --priority=1000 --network=default --action=ALLOW --rules=tcp:5432 --source-ranges=0.0.0.0/0 --target-tags=postgresql-server
 
-IP_ADDR=$(jq -r '.[0].networkInterfaces[0].accessConfigs[0].natIP' ${WORK_DIR}/vm-info.json)
+IP_ADDR_EXT=$(jq -r '.[0].networkInterfaces[0].accessConfigs[0].natIP' ${WORK_DIR}/vm-info.json)
 
 cat >hosts.yaml <<EOF
 ---
 all:
   hosts:
     covid19dp:
-      ansible_host: ${IP_ADDR}
+      ansible_host: ${IP_ADDR_EXT}
 EOF
+
+IP_ADDR_INT=$(jq -r '.[0].networkInterfaces[0].networkIP' ${WORK_DIR}/vm-info.json)
+echo ${IP_ADDR_INT} >postgresql_ip_address.txt
+
+echo "COPY password_postgresql_covid19ro.txt and postgresql_ip_address.txt to dbquery and deploy app"
+cp password_postgresql_covid19ro.txt postgresql_ip_address.txt ~/devel/CORONA/wvv-covid19-datapool/dbquery
+
 
 # Create connector
 # https://cloud.google.com/appengine/docs/standard/python3/connecting-vpc
