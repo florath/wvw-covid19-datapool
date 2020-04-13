@@ -6,5 +6,7 @@ install:
 script:
   - cd covid19datapool_dbsync
   - tox
-#  - cd ../dbquery
-#  - tox
+  - cd ..
+  - cd covid19datapool_dbquery
+  - tox
+
