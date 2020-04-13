@@ -117,24 +117,6 @@ implemented.  So stay in touch for possible changes and extensions:
 especially filters are planned.
 
 
-Introduction
-============
-
-.. image:: https://travis-ci.com/florath/wvv-covid19-datapool.svg?branch=master
-   :target: https://travis-ci.com/florath/wvv-covid19-datapool
-
-This datapool (database) tries to collect data from different sources
-and provides them (refurbished) as a simple to use REST interface.
-
-This project was founded during the WirVsVirus_ Hackathon of the
-German government which took place from 2020-03-20 until 2020-03-22.
-
-.. _WirVsVirus: https://wirvsvirushackathon.org/
-
-.. image:: images/WirVsVirusLogoSmall.png
-   :alt: "WirVsVirus Hackathon Logo"
-   :width: 250
-
 Background
 ==========
 
@@ -176,6 +158,15 @@ statements here about estimates of the dark figure ('infected but not
 tested').
 
 .. _paper: https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Modellierung_Deutschland.pdf?__blob=publicationFile
+
+This project was founded during the WirVsVirus_ Hackathon of the
+German government which took place from 2020-03-20 until 2020-03-22.
+
+.. _WirVsVirus: https://wirvsvirushackathon.org/
+
+.. image:: images/WirVsVirusLogoSmall.png
+   :alt: "WirVsVirus Hackathon Logo"
+   :width: 250
 
 
 Database
@@ -306,6 +297,13 @@ URL: https://joachim-gassen.github.io/2020/03/tidying-the-new-johns-hopkins-covi
 
 The first step looks very similar to the current implementation here:
 tidy up the data, mapping regions / countries to ISO codes, ...
+
+
+Status
+======
+
+.. image:: https://travis-ci.com/florath/wvv-covid19-datapool.svg?branch=master
+   :target: https://travis-ci.com/florath/wvv-covid19-datapool
 
 
 Thanks
