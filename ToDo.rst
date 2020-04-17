@@ -1,6 +1,14 @@
 Cleanup and Basics
 ++++++++++++++++++
 
+* FR Johns-Hopkins data:
+  iso-3166-1 is wrong as it is always FR
+  But
+  Saint Barthelemy -> BL
+  Reunion -> RE
+  St Martin -> MF
+  French Polynesia -> PF
+
 * Describe different deployment mechanisms
   - AppEngine + Firestore
   - AppEngine + PostgreSQL VM
