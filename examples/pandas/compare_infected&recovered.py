@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
+# TODO: sum up US values
+# TODO: sum over a week
 def convert_timestamp(dataframe):
     dataframe['timestamp'] = pd.to_datetime(dataframe['timestamp'], unit='s')
 
@@ -21,13 +23,21 @@ def insert_date(dataframe):
 def filter_columns(dataframe):
     '''Filters data by country and dates. Here: Germany in April 2020'''
     country = 'DE'
-    return dataframe.loc[(dataframe['iso-3166-1'] == country) & (dataframe['date'] > datetime.datetime(2020, 4, 1))]
+    return dataframe.loc[(dataframe['iso-3166-1'] == country) & (dataframe['date'] > datetime.datetime(2020, 3, 31))
+                         & (dataframe['date'] < datetime.datetime(2020, 4, 30))]
+
+
+def filter_columnsp(dataframe):
+    '''Filters data by country and dates. Here: Germany in March 2020'''
+    country = 'DE'
+    return dataframe.loc[(dataframe['iso-3166-1'] == country) & (dataframe['date'] > datetime.datetime(2020, 3, 1))
+                         & (dataframe['date'] < datetime.datetime(2020, 3, 31))]
 
 
 def get_total_deaths(dataframe):
     dataframe.drop(labels=['timestamp', 'iso-3166-1'], axis=1, inplace=True)
     sum_deaths = dataframe.sum(axis=0, skipna=True)
-    return sum_deaths
+    return sum_deaths['deaths_total']
 
 
 path = "/Users/teraadmin/Desktop/John Hopkins/jh.json"
@@ -42,5 +52,8 @@ df.drop(labels=['source', 'original', 'latitude', 'longitude'], axis=1, inplace=
 convert_timestamp(df)
 insert_date(df)
 df = filter_columns(df)
-ax = df.plot(x='date', y=['infected_total', 'recovered_total'])
+df = df.rename(columns={'deaths_total': 'deaths',
+                        'infected_total': 'infected',
+                        'recovered_total': 'recovered'})
+df.plot(x='date', y=['recovered', 'infected'], title='Germany')
 plt.show()
