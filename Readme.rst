@@ -47,7 +47,7 @@ Get complete data sets:
    curl https://covid19datapool.appspot.com/v1/get_all/<name>
 
    where name is one of:
-      ecdc_xlsx johns_hopkins_github gouv_fr_covid19_emergency_room_visits
+      ecdc_cases johns_hopkins_github gouv_fr_covid19_emergency_room_visits
       rki_cases
 
 And the 10 liner to read, filter and display the data:
