@@ -1,0 +1,20 @@
+---
+
+# Prepares the repository
+
+- name: "Install git"
+  apt:
+    name: git
+
+- name: "Create base directory"
+  file:
+    path: "/opt/covid19dp"
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+    
+- name: "Clone git repository"
+  git:
+    repo: "https://github.com/florath/wvv-covid19-datapool"
+    dest: "/opt/covid19dp/wvv-covid19-datapool"

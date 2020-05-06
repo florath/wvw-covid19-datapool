@@ -1,10 +1,1 @@
 dispatch:
-  - url: "*/v1/get_all/*"
-    service: default
-
-  - url: "*/v1/trigger/*"
-    service: data-import
-
-  - url: "*/v1/task/*"
-    service: data-import
-    

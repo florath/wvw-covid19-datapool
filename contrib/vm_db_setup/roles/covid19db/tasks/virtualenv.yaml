@@ -1,0 +1,16 @@
+---
+
+# Creates a virtualenv and installes the needed packages
+
+- name: "Install virtualenv"
+  apt:
+    name: virtualenv
+
+- name: "Install setuptools"
+  apt:
+    name: python3-setuptools
+
+- name: "Install package dependencies"
+  pip:
+    virtualenv: "/opt/covid19dp/venv"
+    requirements: "/opt/covid19dp/wvv-covid19-datapool/covid19datapool_dbsync/requirements.txt"

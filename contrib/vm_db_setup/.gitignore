@@ -1,0 +1,4 @@
+covid19datapool.retry
+password_postgresql_covid19ro.txt
+password_postgresql_covid19usr.txt
+hosts.yaml

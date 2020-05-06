@@ -1,0 +1,114 @@
+---
+
+- name: "Install postgresql"
+  apt:
+    name: "postgresql"
+
+- name: "Install psycopg2"
+  apt:
+    name: "python3-psycopg2"
+
+- name: "Install acl"
+  apt:
+    name: "acl"
+
+- name: "Create the covid19dp database"
+  become: true
+  become_user: postgres
+  postgresql_db:
+    name: covid19dp
+
+- name: "Create database table: metadata"
+  become: true
+  become_user: postgres
+  postgresql_table:
+    db: covid19dp
+    name: metadata
+    columns:
+      - "source text not null primary key"
+      - "jmetadata jsonb not null"
+
+- name: "Create database table: cases"
+  become: true
+  become_user: postgres
+  postgresql_table:
+    db: covid19dp
+    name: cases
+    columns:
+      - "id char(64) primary key"
+      - "source text not null references metadata(source)"
+      - "jdata jsonb not null"
+
+- name: "Create DB user: covid19usr"
+  become: true
+  become_user: postgres
+  postgresql_user:
+    db: "covid19dp"
+    name: "covid19usr"
+    priv: "cases:SELECT,INSERT,DELETE/metadata:SELECT,INSERT,DELETE,UPDATE"
+    role_attr_flags: "NOSUPERUSER,NOCREATEROLE,NOCREATEDB,NOINHERIT,NOREPLICATION,NOBYPASSRLS"
+    password: "{{ lookup('password', 'password_postgresql_covid19usr.txt length=20') }}"
+    # ToDo: use SSL Certificates
+    ssl_mode: "require"
+
+- name: "Create DB user: covid19ro"
+  become: true
+  become_user: postgres
+  postgresql_user:
+    db: "covid19dp"
+    name: "covid19ro"
+    priv: "cases:SELECT/metadata:SELECT"
+    role_attr_flags: "NOSUPERUSER,NOCREATEROLE,NOCREATEDB,NOINHERIT,NOREPLICATION,NOBYPASSRLS"
+    password: "{{ lookup('password', 'password_postgresql_covid19ro.txt length=20') }}"
+    # ToDo: use SSL Certificates
+    ssl_mode: "require"
+
+- name: "Config pg_hba: remove local peer"
+  become: true
+  become_user: postgres
+  postgresql_pg_hba:
+    state: absent
+    dest: /etc/postgresql/11/main/pg_hba.conf
+    contype: local
+    databases: all
+    users: all
+    method: peer
+
+- name: "Config pg_hba: add covid19usr rules"
+  become: true
+  become_user: postgres
+  postgresql_pg_hba:
+    state: present
+    dest: /etc/postgresql/11/main/pg_hba.conf
+    contype: local
+    databases: covid19dp
+    users: covid19usr
+    method: md5
+    
+- name: "Config pg_hba: add covid19ro rules"
+  become: true
+  become_user: postgres
+  postgresql_pg_hba:
+    state: present
+    dest: /etc/postgresql/11/main/pg_hba.conf
+    contype: host
+    databases: covid19dp
+    users: covid19ro
+    address: "10.8.0.0/28"
+    method: md5
+
+- name: "Listen also on the internal network"
+  become: true
+  become_user: postgres
+  postgresql_set:
+    name: listen_addresses
+    value: "0.0.0.0"
+
+- name: "Set environment for covid19usr"
+  copy:
+    dest: "/home/covid19usr/environment"
+    owner: covid19usr
+    group: covid19grp
+    mode: "0600"
+    content: |
+      COVID19DP_PASSWORD="{{ lookup('password', 'password_postgresql_covid19usr.txt length=20') }}"

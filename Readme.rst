@@ -2,31 +2,39 @@ Datapool of COVID-19 cases
 ++++++++++++++++++++++++++
 
 Datapool of COVID-19 data from different sources, refurbished, simple
-data structure (JSON), single and easy to use interface (REST via HTTPS).
+data structure (JSON), different ways accessing the data.
 
-**The project is in beta phase. Interface changes might occur.**
+The latest data can be accessed directly via a REST interface.  It is
+also possible to use the project:
+
+* local file system: using files in the local file system
+* postgres: store data in a PostgreSQL database
+* Google Firestore: store data in a Google Cloud Firestore database
 
 
 Warning & Term of Use
 =====================
 
-Before using this database read the documentation of the data which
+**The project is in beta phase. Interface changes might occur.**
+
+**Before using this database read the documentation of the data which
 you want to use!  A lot data of the sources might be incorrect or not
-what you expect.  Please double check!
+what you expect.  Please double check!**
 
-E.g. 'infected' mostly does not mean the number of really infected
-people but the number of **known** infected people - which has a high
-correlation to how many test are carried out and which people are
-tested (which differs from country to country).
+Examples:
 
-Another example: in the data from the German RKI the 'recovered'
-numbers are only a lower bound because recovery needs not to be
-reported officially.
-
-And a third example: The German RKI data contains only the cases which
-were transmitted electronically.  Data which is transmitted by snail
-mail or by fax is currently not included.  Therefore complete regions
-might have much higher numbers.
+* 'infected' mostly does not mean the number of really infected people
+  but the number of **known** infected people - which has a high
+  correlation to how many test are carried out and which people are
+  tested (which differs from country to country). 
+* In the data from the German RKI the 'recovered' numbers are only a
+  lower bound because recovery needs not to be reported officially.
+* And a third example: The German RKI data contains only the cases
+  which were transmitted electronically.  Data which is transmitted by
+  snail mail or by fax is currently not included.  Therefore complete
+  regions might have much higher numbers.
+* Some sources provide data as summed up totals (like Johns-Hopkins);
+  other as daily new cases (like ECDC).
 
 
 For the Impatient
@@ -102,44 +110,12 @@ Example:
            "location": [ "US", "Alabama", "Etowah", "01055" ]
         }
        },
-     ...
 
 
 This is not the recommended way accessing data - but the only currently
 implemented.  So stay in touch for possible changes and extensions:
 especially filters are planned.
 
-
-PLEASE HELP!
-============
-
-Currently many important decisions are made based on incomplete or not
-correctly interpreted numbers. Please help to improve the situation!
-
-* Find credible data sources
-* Check if sources can be used (legal, license, sensible data, ...)
-* Let us know (open an issue)
-* If you are a programmer: write an adapter to convert the data
-  into the locally used JSON format - and create a pull request.
-
-
-Introduction
-============
-
-.. image:: https://travis-ci.com/florath/wvv-covid19-datapool.svg?branch=master
-   :target: https://travis-ci.com/florath/wvv-covid19-datapool
-
-This datapool (database) tries to collect data from different sources
-and provides them (refurbished) as a simple to use REST interface.
-
-This project was founded during the WirVsVirus_ Hackathon of the
-German government which took place from 2020-03-20 until 2020-03-22.
-
-.. _WirVsVirus: https://wirvsvirushackathon.org/
-
-.. image:: images/WirVsVirusLogoSmall.png
-   :alt: "WirVsVirus Hackathon Logo"
-   :width: 250
 
 Background
 ==========
@@ -183,14 +159,14 @@ tested').
 
 .. _paper: https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Modellierung_Deutschland.pdf?__blob=publicationFile
 
+This project was founded during the WirVsVirus_ Hackathon of the
+German government which took place from 2020-03-20 until 2020-03-22.
 
-Features
-========
+.. _WirVsVirus: https://wirvsvirushackathon.org/
 
-* Automatically updated every some hours from the given sources
-* Unified and easy to use JSON formatted data
-* Data can directly be retrieved using HTTPS from a database
-  (sort and filter actions will shortly follow)
+.. image:: images/WirVsVirusLogoSmall.png
+   :alt: "WirVsVirus Hackathon Logo"
+   :width: 250
 
 
 Database
@@ -287,6 +263,9 @@ The format of the data changes from time to time. Also the detailes
 and location details.  The latest data includes very detailed
 information about the US.
 
+Please note that the original dataset contains some data more than once.
+This is filtered out - and only one instance of a data row is provided.
+
 * ID: :code:`johns_hopkins_github`
 * JSON meta data: `metadata-johns_hopkins_github.json`_
 * Area: world
@@ -318,6 +297,13 @@ URL: https://joachim-gassen.github.io/2020/03/tidying-the-new-johns-hopkins-covi
 
 The first step looks very similar to the current implementation here:
 tidy up the data, mapping regions / countries to ISO codes, ...
+
+
+Status
+======
+
+.. image:: https://travis-ci.com/florath/wvv-covid19-datapool.svg?branch=master
+   :target: https://travis-ci.com/florath/wvv-covid19-datapool
 
 
 Thanks

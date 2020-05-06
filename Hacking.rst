@@ -1,7 +1,6 @@
 Deployment
 ==========
 
-
 Deploy in Google Cloud with Your Account
 ----------------------------------------
 
@@ -93,3 +92,14 @@ not be implemented.  There are too many uncertainties and unknowns
 which data set possible includes another.  Therefor for the time
 being, the data is only unified and converted to JSON.
 
+PLEASE HELP!
+============
+
+Currently many important decisions are made based on incomplete or not
+correctly interpreted numbers. Please help to improve the situation!
+
+* Find credible data sources
+* Check if sources can be used (legal, license, sensible data, ...)
+* Let us know (open an issue)
+* If you are a programmer: write an adapter to convert the data
+  into the locally used JSON format - and create a pull request.

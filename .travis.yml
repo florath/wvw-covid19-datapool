@@ -1,12 +1,12 @@
 language: python
 python:
-  - 3.5
-  - 3.6
   - 3.7
-  - 3.8
 install:
-  - pip install -U pylint
+  - pip install -U tox
 script:
-  - pylint dbsync
-  - pylint dbquery
-  - pylint examples/pandas
+  - cd covid19datapool_dbsync
+  - tox
+  - cd ..
+  - cd covid19datapool_dbquery
+  - tox
+

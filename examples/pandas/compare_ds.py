@@ -47,28 +47,32 @@ j1 = j1.rename(columns={'deaths_new': 'jhu_deaths_new',
 
 ######################################################################
 
-r0 = pd.read_json("file:data/rki_cases.json")
-r0.drop(labels=['original', ],
-        axis=1, inplace=True)
-insert_date(r0)
-r1 = filter_data(r0)
-#r2 = r1.set_index('date')
-#r2['infected'].resample('D').sum()
+if COUNTRY == "DE":
+    r0 = pd.read_json("file:data/rki_cases.json")
+    r0.drop(labels=['original', ],
+            axis=1, inplace=True)
+    insert_date(r0)
+    r1 = filter_data(r0)
+    #r2 = r1.set_index('date')
+    #r2['infected'].resample('D').sum()
 
-r2 = r1.resample('D', on='date').sum().sort_values(by='date').reset_index()
+    r2 = r1.resample('D', on='date').sum().sort_values(by='date').reset_index()
 
-r2 = r2.rename(columns={'deaths': 'rki_deaths_new',
-                        'infected': 'rki_infected_new'})
+    r2 = r2.rename(columns={'deaths': 'rki_deaths_new',
+                            'infected': 'rki_infected_new'})
 
-
+T="deaths"
+#T="infected"
+    
 ax = e1.plot(x="date",
-             y=["ecdc_deaths_new",],# "ecdc_infected_new"],
+             y=["ecdc_%s_new" % T,],# "ecdc_infected_new"],
              logy=False)
 ax = j1.plot(x="date", ax=ax,
-             y=["jhu_deaths_new",],# "jhu_infected_new"],
+             y=["jhu_%s_new" % T,],# "jhu_infected_new"],
              logy=False)
-ax = r2.plot(x="date", ax=ax,
-             y=["rki_deaths_new",],# "rki_infected_new"],
-             logy=False)
-#plt.title(COUNTRY)
+if COUNTRY == "DE":
+    ax = r2.plot(x="date", ax=ax,
+                 y=["rki_%s_new" % T,],# "rki_infected_new"],
+                 logy=False)
+plt.title(COUNTRY)
 plt.show()
