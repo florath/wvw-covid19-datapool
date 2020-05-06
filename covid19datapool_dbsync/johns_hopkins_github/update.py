@@ -4,21 +4,20 @@ the Johns Hopkins CSSE data set
 '''
 
 import csv
-import dateutil.parser
-import git
+import importlib
 import os
 import shutil
 import tempfile
-import importlib
 
+import dateutil.parser
+import git
+import pycountry
 from lib.data_import import DataCollectionImporter
 from lib.parse_args import parse_args_common
-
 
 GIT_REPO_URL = "https://github.com/CSSEGISandData/COVID-19.git"
 DATA_DIR = "csse_covid_19_data/csse_covid_19_daily_reports"
 COUNTRY2ISO_MAPPING = "johns_hopkins_github/jh-country2iso.csv"
-
 
 country2iso = {}
 with open(COUNTRY2ISO_MAPPING, newline='') as csvfile:
@@ -110,6 +109,13 @@ def handle_one_data_line_2020_03(line):
 
     try:
         ts = convert_ts(line[4])
+        if line[3] is not 'US' or 'China':
+            if line[2] != line[3]:
+                # The 'strip()' is needed because of incorrect input data, e.g.
+                # , Azerbaijan,2020-02-28T15:03:26,1,0,0
+                iso = pycountry.countries.get(name=line[2].strip())
+        else:
+            iso = pycountry.countries.get(name=line[3].strip())
         nd = {
             'timestamp': ts,
             'infected_total': convert2int(line[7]),
@@ -119,9 +125,7 @@ def handle_one_data_line_2020_03(line):
             'original': {
                 'location': [line[3], line[2], line[1], line[0]]
             },
-            # The 'strip()' is needed because of incorrect input data, e.g.
-            # , Azerbaijan,2020-02-28T15:03:26,1,0,0
-            'iso-3166-1': country2iso[line[3].strip()],
+            'iso-3166-1': iso.alpha_2,
             # ToDo: fill in missing iso-3166-2 region code
             'longitude': convert2float(line[6]),
             'latitude': convert2float(line[5])
