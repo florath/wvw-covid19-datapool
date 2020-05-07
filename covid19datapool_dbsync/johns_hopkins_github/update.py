@@ -11,7 +11,6 @@ import tempfile
 
 import dateutil.parser
 import git
-import pycountry
 from lib.data_import import DataCollectionImporter
 from lib.parse_args import parse_args_common
 
@@ -116,13 +115,7 @@ def handle_one_data_line_2020_03(line):
 
     try:
         ts = convert_ts(line[4])
-        if line[3] is not 'US' or 'China':
-            if line[2] != line[3]:
-                # The 'strip()' is needed because of incorrect input data, e.g.
-                # , Azerbaijan,2020-02-28T15:03:26,1,0,0
-                iso = pycountry.countries.get(name=line[2].strip())
-        else:
-            iso = pycountry.countries.get(name=line[3].strip())
+
         nd = {
             'timestamp': ts,
             'infected_total': convert2int(line[7]),
@@ -132,8 +125,10 @@ def handle_one_data_line_2020_03(line):
             'original': {
                 'location': [line[3], line[2], line[1], line[0]]
             },
-            'iso-3166-1': iso.alpha_2,
-            'iso-3166-2': region2iso[line[2].strip],
+            # The 'strip()' is needed because of incorrect input data, e.g.
+            # , Azerbaijan,2020-02-28T15:03:26,1,0,0
+            'iso-3166-1': country2iso[line[3].strip()],
+            'iso-3166-2': region2iso[line[2].strip()],
             'longitude': convert2float(line[6]),
             'latitude': convert2float(line[5])
         }
