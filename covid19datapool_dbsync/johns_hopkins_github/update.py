@@ -18,12 +18,19 @@ from lib.parse_args import parse_args_common
 GIT_REPO_URL = "https://github.com/CSSEGISandData/COVID-19.git"
 DATA_DIR = "csse_covid_19_data/csse_covid_19_daily_reports"
 COUNTRY2ISO_MAPPING = "johns_hopkins_github/jh-country2iso.csv"
+REGION2ISO_MAPPING = "johns_hopkins_github/jh-region2iso.csv"
 
 country2iso = {}
 with open(COUNTRY2ISO_MAPPING, newline='') as csvfile:
     content = csv.reader(csvfile, delimiter=',', quotechar='"')
     for line in content:
         country2iso[line[0]] = line[1]
+
+region2iso = {}
+with open(REGION2ISO_MAPPING, newline='') as csfile:
+    content = csv.reader(csvfile, delimiter=',', quotechar='"')
+    for line in content:
+        region2iso[line[1]] = line[2]
 
 
 def convert2int(s):
@@ -126,7 +133,7 @@ def handle_one_data_line_2020_03(line):
                 'location': [line[3], line[2], line[1], line[0]]
             },
             'iso-3166-1': iso.alpha_2,
-            # ToDo: fill in missing iso-3166-2 region code
+            'iso-3166-2': region2iso[line[2].strip],
             'longitude': convert2float(line[6]),
             'latitude': convert2float(line[5])
         }
