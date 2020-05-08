@@ -44,7 +44,7 @@ Get complete data sets:
 
 .. code:: bash
 
-   curl https://covid19datapool.appspot.com/v1/get_all/<name>
+   curl -H "Accept-Encoding: gzip" https://covid19datapool.appspot.com/v1/get_all/<name> | gunzip
 
    where name is one of:
       ecdc_cases johns_hopkins_github gouv_fr_covid19_emergency_room_visits

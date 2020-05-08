@@ -4,7 +4,7 @@ Methods to get complete data sets.
 
 import json
 import psycopg2
-
+import resource
 
 def v1_get_all_cases_source(environment, source):
     '''Get the complete data set'''
@@ -46,6 +46,7 @@ def v1_get_all_cases_source(environment, source):
 
     def data_generator():
         doc_cnt = 0
+        data_length = 0
         is_first_doc = True
         yield b"["
         yield json.dumps(sources[source]).encode()
@@ -59,7 +60,14 @@ def v1_get_all_cases_source(environment, source):
                 yield ","
             yield json.dumps(doc[0])
             doc_cnt += 1
+            data_length += len(doc[0])
             is_first_doc = False
+            #if doc_cnt % 100 == 0:
+            #    print("v1_get_all_cases_source environment [%s] source [%s] "
+            #          "send [%d] docs with length [%d] memusage [%d]" %
+            #          (environment, source, doc_cnt, data_length,
+            #           resource.getrusage(resource.RUSAGE_SELF).ru_maxrss))
+
         print("v1_get_all_cases_source environment [%s] source [%s] "
               "send [%d] docs" % (environment, source, doc_cnt))
         yield b"]]"

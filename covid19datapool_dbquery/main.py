@@ -6,6 +6,14 @@ Main entry point for the REST interface
 from flask import Flask, request
 from data_retrieval.v1_get_all import v1_get_all_cases_source
 
+try:
+  import googleclouddebugger
+  googleclouddebugger.enable()
+except ImportError:
+   pass
+
+import logging
+logging.basicConfig(level=logging.INFO)
 
 # This is the way it is documented
 # pylint: disable=invalid-name
